@@ -164,9 +164,17 @@ export default {
 
 
 <style scoped>
-#app {
-  width: 1366px;
-  height: 768px;
+@media screen and (min-width: 1367px) {
+  #app {
+    width: 1920px;
+    height: 1080px;
+  }
+}
+@media screen and (max-width: 1366px) {
+  #app {
+    width: 1366px;
+    height: 768px;
+  }
 }
 .app-layout {
   width: 100%;
@@ -208,8 +216,20 @@ export default {
   margin-right: 0;
 }
 .app-content {
-  width: calc(100% - 40px);
-  height: calc(100% - 36px);
+  width: 100%;
+  height: 100%;
   padding: 20px 200px;
+}
+
+/* 设置滚动条的样式 */
+/* 局部不显示滚动条 */
+::-webkit-scrollbar {
+  display: none;
+}
+</style>
+<style>
+/* 全局不显示滚动条 */
+html {
+  overflow: hidden;
 }
 </style>
