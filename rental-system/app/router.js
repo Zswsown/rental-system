@@ -8,4 +8,5 @@ module.exports = app => {
   router.get('/', controller.home.index);
   router.post('/api/register', controller.user.register);
   router.post('/api/login', controller.user.login);
+  router.post('/api/buser/publishHouse', controller.buser.publishHouse)
 };

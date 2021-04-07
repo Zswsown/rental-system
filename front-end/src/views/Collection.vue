@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import HouseCollection from '@/components/HouseCollection'
+import HouseCollection from '@/components/common/HouseCollection'
 export default {
   name: "Collection",
   components: {

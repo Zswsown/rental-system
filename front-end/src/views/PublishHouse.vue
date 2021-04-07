@@ -10,63 +10,109 @@
     <a-row type="flex" justify="center">
       <a-col>
         <a-form-model
-          class="publishForm"
-          ref="publishForm"
-          :model="publishForm"
+          class="publishHouseForm"
+          ref="publishHouseForm"
+          :model="publishHouseForm"
           :rules="rules"
           v-bind="layout"
         >
-          <a-form-model-item has-feedback label="小区所在城市" prop="city">
-            <a-input
-              v-model="publishForm.code"
-              autocomplete="off"
-              placeholder="请输入小区所在城市"
-            />
-          </a-form-model-item>
-          <a-form-model-item has-feedback label="小区" prop="pass">
-            <a-input
-              v-model="publishForm.pass"
-              type="password"
-              autocomplete="off"
-              placeholder="请输入小区名字"
-            />
-          </a-form-model-item>
-          <a-form-model-item has-feedback label="房屋地址" prop="checkPass">
-            <a-input
-              v-model="publishForm.checkPass"
-              type="password"
-              autocomplete="off"
-              placeholder="请输入出租房屋的地址"
-            />
-          </a-form-model-item>
-          <a-form-model-item has-feedback label="期望租金" prop="tel">
-            <a-input
-              v-model="publishForm.tel"
-              type="tel"
-              autocomplete="off"
-              placeholder="请输入您期望租出的价格"
-            />
-          </a-form-model-item>
-          <a-form-model-item has-feedback label="出租方式" prop="tel">
-            <a-input
-              v-model="publishForm.tel"
-              type="tel"
-              autocomplete="off"
-              placeholder="请输入您的出租方式"
-            />
-          </a-form-model-item>
-          <a-form-model-item has-feedback label="手机号码" prop="tel">
-            <a-input
-              v-model="publishForm.tel"
-              type="tel"
-              autocomplete="off"
-              placeholder="请输入您的手机号码"
-            />
-          </a-form-model-item>
+          <!-- 出租方式 -->
+          <a-row>
+            <a-form-model-item has-feedback label="出租方式" prop="type">
+              <a-select v-model="publishHouseForm.type">
+                <a-select-option v-for="item in typeList" :key="item.value">
+                  {{ item.label }}
+                </a-select-option>
+              </a-select>
+            </a-form-model-item>
+          </a-row>
+          <!-- 出租房间数量 -->
+          <a-row>
+            <a-form-model-item has-feedback label="出租房间数量" prop="num">
+              <a-input-number v-model="num" :min="1" />
+            </a-form-model-item>
+          </a-row>
+          <!-- 房屋描述 -->
+          <a-row>
+            <a-form-model-item has-feedback label="房屋描述" prop="desc">
+              <a-textarea
+                v-model="publishHouseForm.desc"
+                :rows="2"
+                placeholder="请输入房屋描述"
+              ></a-textarea>
+            </a-form-model-item>
+          </a-row>
+          <!-- 房屋地址 -->
+          <a-row>
+            <a-form-model-item has-feedback label="房屋地址" prop="address">
+              <a-textarea
+                v-model="publishHouseForm.address"
+                :rows="2"
+                placeholder="请输入房间地址"
+              ></a-textarea>
+            </a-form-model-item>
+          </a-row>
+          <!-- 出租房信息 -->
+          <a-row
+            style="
+              border: 1px solid #eee;
+              padding: 0px 8px;
+              max-height: 500px;
+              overflow: auto;
+            "
+          >
+            <a-row
+              v-for="(rentalHouse, index) in publishHouseForm.rentalHouse"
+              :key="`rentalHouse` + index"
+            >
+              <a-row>
+                <h3 style="font-weight: 700">第{{ index + 1 }}间出租房信息</h3>
+              </a-row>
+              <!-- 房间面积 -->
+              <a-form-model-item has-feedback label="房间面积">
+                <a-input-number v-model="rentalHouse.area" :min="1" />
+              </a-form-model-item>
+              <!-- 房间租金 -->
+              <a-form-model-item has-feedback label="租金(:元)">
+                <a-input-number v-model="rentalHouse.price" :min="1" />
+              </a-form-model-item>
+              <!-- 房间朝向 -->
+              <a-form-model-item has-feedback label="房间朝向">
+                <a-select v-model="rentalHouse.direct">
+                  <a-select-option v-for="item in directList" :key="item.value">
+                    {{ item.label }}
+                  </a-select-option>
+                </a-select>
+              </a-form-model-item>
+              <!-- 房间标签 -->
+              <a-form-model-item has-feedback label="房间标签">
+                <a-select
+                  v-model="rentalHouse.tag"
+                  mode="tags"
+                  placeholder="请输入房间的标签"
+                >
+                </a-select>
+              </a-form-model-item>
+              <!-- 房间描述 -->
+              <a-form-model-item has-feedback label="房间描述">
+                <a-textarea
+                  v-model="rentalHouse.desc"
+                  :rows="2"
+                  placeholder="请输入房间描述"
+                ></a-textarea>
+              </a-form-model-item>
+              <!-- 房间照片 -->
+              <!-- <a-form-model-item has-feedback label="房间照片">
+                <a-upload list-type="picture" :remove="removePictures(rentalHouse.picURL)" :before-upload="beforePicturesUpload">
+                  <a-button> <a-icon type="upload" /> 上传 </a-button>
+                </a-upload>
+              </a-form-model-item> -->
+            </a-row>
+          </a-row>
         </a-form-model>
       </a-col>
     </a-row>
-    <a-row type="flex" justify="center">
+    <a-row type="flex" justify="center" style="margin-top: 8px">
       <a-col>
         <a-button
           key="提交发布"
@@ -82,63 +128,121 @@
 </template>
 
 <script>
+import req from '@/api/req.js'
 export default {
   name: "PublishHouse",
   data () {
     return {
-      type: true,
-      loading: false,
+      // 出租房间数量
+      num: 1,
+      // 出租方式 选项列表
+      typeList: [
+        { label: '不限', value: 'all' },
+        { label: '整租', value: 'entire' },
+        { label: '分租', value: 'share' }
+      ],
+      // 房间朝向 选项列表
+      directList: [
+        { label: '东', value: 'east' },
+        { label: '西', value: 'west' },
+        { label: '南', value: 'south' },
+        { label: '北', value: 'north' }
+      ],
+      // 发布房源 表单布局
       layout: {
         labelCol: { span: 5 },
         wrapperCol: { span: 14 },
       },
-      publishForm: {
-        type: "tenant",
-        code: "",
-        pass: "",
-        checkPass: "",
-        tel: ""
+      // 发布房源 提交的表单
+      publishHouseForm: {
+        // 出租方式
+        type: "all",
+        // 描述
+        desc: "",
+        // 出租房间数量
+        num: 1,
+        // 房间地址
+        address: "",
+        // 出租房信息
+        rentalHouse: [
+          {
+            // 房间面积
+            area: 0,
+            // 房间朝向
+            direct: "east",
+            // 房间描述
+            desc: "",
+            // 房间标签
+            tag: [],
+            // 房间出租价格
+            price: 0,
+            // 房间照片
+            // picURL: []
+          }
+        ]
       },
+      // 发布房源表单 校验规则
       rules: {
-        code: [{ required: true, message: "请输入账号", trigger: 'change' }, { required: true, trigger: 'blur' }],
-        pass: [{ required: true, message: "请输入密码", trigger: 'change' }, { required: true, trigger: 'blur' }],
-        checkPass: [{ validator: this.validatePass, trigger: 'change' }],
-        tel: [{ validator: this.validateTel, trigger: 'change' }],
+        num: [{ required: true, message: '请输入出租房间数量', trigger: 'blur' }]
       },
+      // 提交发布房源 表单的状态
+      loading: false,
     }
   },
   methods: {
+    // 提交 发布房源表单
     publish () {
       this.loading = true
-      this.$refs.publishForm.validate(valid => {
+      this.$refs.publishHouseForm.validate(valid => {
         if (valid) {
           this.loading = false
-          message.success("注册成功");
-          this.visible = false
+          let data = {
+            ...this.publishHouseForm,
+            num: this.num,
+            userInfo: this.userInfo
+          }
+          console.log("发布的房源信息：", data)
+          req({
+            method: "POST",
+            api: "/api/buser/publishHouse",
+            data: data
+          }).then(res => {
+            console.log(res)
+          }).catch(err => {
+            console.log(err)
+          })
+          // message.success("注册成功");
+          // this.visible = false
         } else {
           this.loading = false
-          console.log("注册信息未填写");
-          message.error("注册信息未填写")
+          console.log("请填写正确的房源发布信息");
+          message.error("请填写正确的房源发布信息")
           return false;
         }
       })
     },
-    validatePass (rule, value, callback) {
-      if (value === '') {
-        callback(new Error('请再次输入密码'));
-      } else if (value !== this.publishForm.pass) {
-        callback(new Error("两次密码输入不一致！"));
-      } else {
-        callback();
+  },
+  computed: {
+    userInfo () {
+      return this.$store.state.userInfo;
+    }
+  },
+  watch: {
+    // 出租房数量 与 出租房信息的个数 一样多
+    num (newValue, oldValue) {
+      let rentalHouseList = []
+      console.log(newValue, oldValue)
+      for (let i = 0; i < newValue; i++) {
+        rentalHouseList.push({
+          area: 0,
+          direct: "east",
+          desc: "",
+          tag: [],
+          price: 0,
+          // picURL: []
+        })
       }
-    },
-    validateTel (rule, value, callback) {
-      if (!(/^1[3456789]\d{9}$/.test(value))) {
-        callback(new Error('手机号码格式错误'));
-      }
-      else {
-        callback();
-      }
+      this.publishHouseForm.rentalHouse = rentalHouseList
     }
   }
 }
@@ -151,7 +255,10 @@ export default {
   width: 100%;
   height: 100%;
 }
-.publishForm {
+.publishHouseForm {
   width: 600px;
+}
+::-webkit-scrollbar {
+  display: none;
 }
 </style>

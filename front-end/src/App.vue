@@ -21,62 +21,33 @@
               >
             </a-menu>
           </a-col>
-          <!-- 登录注册及徽标显示栏 -->
+
+          <!-- 登录注册及登陆成功后徽标显示栏 -->
           <a-col :offset="4">
-            <div class="app-login">
-              <span style="margin-right: 6px"
-                ><a-icon type="aliwangwang" theme="filled"
-              /></span>
+            <div class="app-status">
+              <!-- 用户头像 -->
+              <span style="margin-right: 6px">
+                <a-icon type="aliwangwang" theme="filled" />
+              </span>
+
               <!-- 注册登录 -->
-              <login></login>
-              <register></register>
+              <span
+                v-if="Object.keys(userInfo).length === 0"
+                style="display: flex"
+              >
+                <login></login>
+                <register></register>
+              </span>
 
               <!-- 用户登陆成功 -->
-              <!-- <a-popover>
-                <template slot="content">
-                  <a-menu>
-                    <a-menu-item @click="$router.push('/editPersonalInfo')"
-                      >修改个人信息</a-menu-item
-                    >
-                    <a-menu-item>查看浏览记录</a-menu-item>
-                  </a-menu>
-                </template>
-                <span
-                  ><a style="color: #fff" @click="loginModalVisible = true"
-                    >Zswsown</a
-                  ></span
-                >
-              </a-popover>
-              <span
-                ><a style="color: #fff" @click="registerModalVisible = true">
-                  退出
-                </a></span
-              > -->
+              <span v-else-if="userInfo.role === 'guser'">
+                <g-user-personal-center></g-user-personal-center>
+              </span>
 
               <!-- 房源管家登录成功 -->
-              <!-- <a-popover>
-                <template slot="content">
-                  <a-menu>
-                    <a-menu-item @click="$router.push('/editPersonalInfo')"
-                      >修改个人信息</a-menu-item
-                    >
-                    <a-menu-item @click="$router.push('/editHouseState')"
-                      >房源状态管理</a-menu-item
-                    >
-                    <a-menu-item>更新房源</a-menu-item>
-                  </a-menu>
-                </template>
-                <span
-                  ><a style="color: #fff" @click="loginModalVisible = true"
-                    >Zswsown</a
-                  ></span
-                >
-              </a-popover>
-              <span
-                ><a style="color: #fff" @click="registerModalVisible = true">
-                  退出
-                </a></span
-              > -->
+              <span v-else-if="userInfo.role === 'buser'">
+                <b-user-personal-center></b-user-personal-center>
+              </span>
             </div>
           </a-col>
         </a-row>
@@ -108,32 +79,27 @@
         </a-layout-sider>
       </a-layout>
     </a-layout>
-    <login
-      :login-modal-visible="getLoginModalVisible"
-      @cancle="loginModalVisible = false"
-    ></login>
-    <register
-      :register-modal-visible="getRegisterModalVisible"
-      @cancle="registerModalVisible = false"
-    ></register>
   </div>
 </template>
 
 <script>
 import root from "@/config/root.js"
-import Login from "@/components/Login.vue"
-import Register from '@/components/Register.vue'
+import Login from "@/components/common/Login.vue"
+import Register from '@/components/common/Register.vue'
+import GUserPersonalCenter from '@/components/GUser/GUserPersonalCenter'
+import BUserPersonalCenter from '@/components/BUser/BUserPersonalCenter'
 
 export default {
   name: "app",
   components: {
     Login,
-    Register
+    Register,
+    GUserPersonalCenter,
+    BUserPersonalCenter
   },
   data () {
     return {
-      loginModalVisible: false,
-      registerModalVisible: false
+
     }
   },
   computed: {
@@ -145,11 +111,9 @@ export default {
     siderMenuData () {
       return root.siderMenu
     },
-    getLoginModalVisible () {
-      return this.loginModalVisible
-    },
-    getRegisterModalVisible () {
-      return this.registerModalVisible
+    // 用户信息
+    userInfo () {
+      return this.$store.state.userInfo
     }
   },
   methods: {
@@ -195,7 +159,7 @@ export default {
   background: #001529;
   color: #fff !important;
 }
-.app-login {
+.app-status {
   display: flex;
   line-height: 36px !important;
   color: #fff;

@@ -136,21 +136,20 @@ export default {
             if (res.data.error === 0) {
               console.log("登陆成功", res.data)
               self.$store.dispatch('insertUserInfo', res.data.data)
+              self.visible = false
               message.success(res.data.message)
             } else {
               message.error(res.data.message)
             }
-            self.visible = false
             self.$refs.loginForm.resetFields()
           }).catch(err => {
             message.error(err)
-            self.visible = false
             self.$refs.loginForm.resetFields()
           })
         } else {
           self.loading = false
-          console.log("登录信息未填写")
-          message.error("登录信息未填写")
+          console.log("请填写正确的登录信息")
+          message.error("请填写正确的登录信息")
           return false
         }
       })

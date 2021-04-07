@@ -112,5 +112,5 @@ async function updateBuser ({ code, password, role, tel, status }) {
 module.exports = {
   selectBUser,
   insertBUser,
-  updateBuser
+  updateBuser,
 }

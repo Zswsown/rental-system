@@ -89,7 +89,7 @@
 
 <script>
 import message from "ant-design-vue/lib/message"
-import HouseInfo from '@/components/HouseInfo.vue'
+import HouseInfo from '@/components/common/HouseInfo.vue'
 export default {
   name: "SelectHouse",
   components: {

@@ -13,6 +13,10 @@ class BUserController extends Controller {
     const user = await ctx.service.buser.login({ code, password, role })
     ctx.body = user
   }
+  async publishHouse () {
+    const { ctx } = this
+    ctx.body = ctx.request.body
+  }
 }
 module.exports = BUserController
 

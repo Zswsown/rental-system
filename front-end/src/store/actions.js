@@ -1,6 +1,9 @@
-import { INSERT_USERINFO } from './mutation-types'
+import { INSERT_USERINFO, CLEAN_USERINFO } from './mutation-types'
 export default {
-  insertUserInfo (context, userInfo) {
-    context.commit(INSERT_USERINFO, userInfo)
+  insertUserInfo ({ commit }, userInfo) {
+    commit(INSERT_USERINFO, userInfo)
+  },
+  cleanUserInfo ({ commit }) {
+    commit(CLEAN_USERINFO)
   }
 }

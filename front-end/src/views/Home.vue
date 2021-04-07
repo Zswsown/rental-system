@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import SelectHouse from '@/components/SelectHouse.vue'
+import SelectHouse from '@/components/common/SelectHouse.vue'
 export default {
   name: "Home",
   components: {
