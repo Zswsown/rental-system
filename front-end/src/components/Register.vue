@@ -127,47 +127,47 @@ export default {
             data: data
           }).then(res => {
             if (res.data.error === -1) {
-              message.success(res.data.message);
+              message.success(res.data.message)
             } else {
-              message.error(res.data.message);
+              message.error(res.data.message)
             }
             this.visible = false
-            this.$refs.loginForm.resetFields();
+            this.$refs.registerForm.resetFields()
           }).catch(err => {
-            message.error(err);
+            message.error(err)
             this.visible = false
-            this.$refs.loginForm.resetFields();
+            this.$refs.registerForm.resetFields()
           })
         } else {
           this.loading = false
-          console.log("注册信息未填写");
+          console.log("注册信息未填写")
           message.error("注册信息未填写")
-          return false;
+          return false
         }
       })
     },
     // 取消注册
     cancle () {
       this.visible = false
-      this.$refs.registerForm.resetFields();
+      this.$refs.registerForm.resetFields()
     },
     // 密码的二次校验
     validatePass (rule, value, callback) {
       if (value === '') {
-        callback(new Error('请再次输入密码'));
+        callback(new Error('请再次输入密码'))
       } else if (value !== this.registerForm.password) {
-        callback(new Error("两次密码输入不一致！"));
+        callback(new Error("两次密码输入不一致！"))
       } else {
-        callback();
+        callback()
       }
     },
     // 联系方式（手机号码）的校验
     validateTel (rule, value, callback) {
       if (!(/^1[3456789]\d{9}$/.test(value))) {
-        callback(new Error('手机号码格式错误'));
+        callback(new Error('手机号码格式错误'))
       }
       else {
-        callback();
+        callback()
       }
     }
   }

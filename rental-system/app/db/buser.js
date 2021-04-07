@@ -1,20 +1,37 @@
-'use strict';
-const pool = require('./pool');
+'use strict'
+const pool = require('./pool')
 
 // 查找注册的房源管家账号是否存在
 async function selectBUser ({ code, password, role }) {
   try {
-    const sql = 'SELECT * FROM buser WHERE `code` = ? AND `password` = ? AND role = ? AND status=`success`';
-    const [rows, fields] = await pool.query(sql, [code, password, role]);
+    const sql = 'SELECT * FROM buser WHERE `code` = ? AND `password` = ? AND role = ?'
+    const [rows, fields] = await pool.query(sql, [code, password, role])
     if (rows.length === 0) {
       return {
         message: '账号为空',
-        error: -2
+        error: -2,
       }
     } else {
-      return {
-        message: '登录成功',
-        error: 0
+      if (rows[0].status === "reviewing") {
+        return {
+          message: '账号审核中',
+          error: -1,
+          data: rows[0]
+        }
+      }
+      else if (rows[0].status === "refused") {
+        return {
+          message: '注册账号被拒绝',
+          error: -2,
+          data: rows[0]
+        }
+      }
+      else if (rows[0].status === "success") {
+        return {
+          message: '登录成功',
+          error: 0,
+          data: rows[0]
+        }
       }
     }
   }
@@ -24,27 +41,18 @@ async function selectBUser ({ code, password, role }) {
 }
 
 // 无该账号，则添加该注册的账号进数据库
-async function insertBuser ({ code, password, role, tel }) {
+async function insertBUser ({ code, password, role, tel }) {
   try {
-    const isExist = selectBUser({ code, password, role }).error
-    if (isExist) {
-      const sql = 'INSERT INTO buser (code,password,role,tel,status) values(?,?,?,?,?)';
-      const [rows, fields] = await pool.query(sql, [code, password, role, tel, 'reviewing']);
-      if (rows.affectedRows > 0) {
-        return {
-          message: '注册成功,等待管理员审核',
-          error: -1
-        }
-      } else {
-        return {
-          message: '服务器繁忙',
-          error: -2
-        }
-      }
-    }
-    else {
+    const sql = 'INSERT INTO buser (code,password,role,tel,status) values(?,?,?,?,?)'
+    const [rows, fields] = await pool.query(sql, [code, password, role, tel, 'reviewing'])
+    if (rows.affectedRows > 0) {
       return {
-        message: '账号已存在',
+        message: '提交注册成功,等待管理员审核',
+        error: -1
+      }
+    } else {
+      return {
+        message: '服务器繁忙',
         error: -2
       }
     }
@@ -67,8 +75,8 @@ async function updateBuser ({ code, password, role, tel, status }) {
   try {
     const isExist = selectBUser({ code, password, role }).error
     if (isExist) {
-      const sql = 'INSERT INTO buser (code,password,role,tel,status) values(?,?,?,?,?)';
-      const [rows, fields] = await pool.query(sql, [code, password, role, tel, status]);
+      const sql = 'INSERT INTO buser (code,password,role,tel,status) values(?,?,?,?,?)'
+      const [rows, fields] = await pool.query(sql, [code, password, role, tel, status])
       if (rows.affectedRows > 0) {
         return {
           message: '更新成功',
@@ -103,6 +111,6 @@ async function updateBuser ({ code, password, role, tel, status }) {
 
 module.exports = {
   selectBUser,
-  insertBuser,
+  insertBUser,
   updateBuser
-};
+}

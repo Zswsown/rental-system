@@ -34,8 +34,8 @@
               v-model="role"
               style="display: flex; justify-content: space-around"
             >
-              <a-radio value="guser">租户</a-radio>
-              <a-radio value="buser">房源管家</a-radio>
+              <a-radio :value="`guser`">租户</a-radio>
+              <a-radio :value="`buser`">房源管家</a-radio>
             </a-radio-group>
           </a-col>
         </a-row>
@@ -49,7 +49,7 @@
         <a-form-model-item has-feedback label="账号" prop="code">
           <a-input v-model="loginForm.code" autocomplete="off" />
         </a-form-model-item>
-        <a-form-model-item has-feedback label="密码" prop="pass">
+        <a-form-model-item has-feedback label="密码" prop="password">
           <a-input
             v-model="loginForm.password"
             type="password"
@@ -117,14 +117,15 @@ export default {
   methods: {
     // 提交登录
     login () {
-      this.loading = true
-      this.$refs.loginForm.validate(valid => {
+      let self = this
+      self.loading = true
+      self.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = false
+          self.loading = false
           let data = {
-            role: this.role,
-            code: this.loginForm.code,
-            password: this.loginForm.password
+            role: self.role,
+            code: self.loginForm.code,
+            password: self.loginForm.password
           }
           console.log("登录信息-data", data)
           req({
@@ -133,37 +134,37 @@ export default {
             data: data
           }).then(res => {
             if (res.data.error === 0) {
-              message.success(res.data.message);
+              message.success(res.data.message)
             } else {
-              message.error(res.data.message);
+              message.error(res.data.message)
             }
-            this.visible = false
-            this.$refs.loginForm.resetFields();
+            self.visible = false
+            self.$refs.loginForm.resetFields()
           }).catch(err => {
-            message.error(err);
-            this.visible = false
-            this.$refs.loginForm.resetFields();
+            message.error(err)
+            self.visible = false
+            self.$refs.loginForm.resetFields()
           })
         } else {
-          this.loading = false
-          console.log("登录信息未填写");
+          self.loading = false
+          console.log("登录信息未填写")
           message.error("登录信息未填写")
-          return false;
+          return false
         }
       })
     },
     // 取消登录
     cancle () {
       this.visible = false
-      this.$refs.loginForm.resetFields();
+      this.$refs.loginForm.resetFields()
     },
     // 验证码校验规则
     validateVerificationCode (rule, value, callback) {
       if (this.loginForm.verificationCode.toLowerCase() !== this.verificationCode.toLowerCase()) {
-        callback(new Error('验证码错误'));
+        callback(new Error('验证码错误'))
       }
       else {
-        callback();
+        callback()
       }
     }
   },
@@ -171,7 +172,7 @@ export default {
     // 验证码更新
     visible (newValue, oldValue) {
       if (newValue) {
-        this.verificationCode = getVerificationCode();
+        this.verificationCode = getVerificationCode()
       }
     }
   }

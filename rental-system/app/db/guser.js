@@ -1,20 +1,21 @@
-'use strict';
-const pool = require('./pool');
+'use strict'
+const pool = require('./pool')
 
 // 查找注册的用户账号是否存在
 async function selectGUser ({ code, password, role }) {
   try {
-    const sql = 'SELECT * FROM guser WHERE `code` = ? AND `password` = ? AND role = ?';
-    const [rows, fields] = await pool.query(sql, [code, password, role]);
+    const sql = 'SELECT * FROM guser WHERE `code` = ? AND `password` = ? AND role = ?'
+    const [rows, fields] = await pool.query(sql, [code, password, role])
     if (rows.length === 0) {
       return {
         message: '账号为空',
-        error: -2
+        error: -2,
       }
     } else {
       return {
         message: '登录成功',
-        error: 0
+        error: 0,
+        data: rows[0]
       }
     }
   }
@@ -24,27 +25,18 @@ async function selectGUser ({ code, password, role }) {
 }
 
 // 无该账号，则添加该注册的账号进数据库
-async function insertGuser ({ code, password, role, tel }) {
+async function insertGUser ({ code, password, role, tel }) {
   try {
-    const isExist = selectGUser({ code, password, role }).error
-    if (isExist) {
-      const sql = 'INSERT INTO guser (code,password,role,tel) values(?,?,?,?)';
-      const [rows, fields] = await pool.query(sql, [code, password, role, tel]);
-      if (rows.affectedRows > 0) {
-        return {
-          message: '注册成功',
-          error: -1
-        }
-      } else {
-        return {
-          message: '服务器繁忙',
-          error: -2
-        }
-      }
-    }
-    else {
+    const sql = 'INSERT INTO guser (code,password,role,tel) values(?,?,?,?)'
+    const [rows, fields] = await pool.query(sql, [code, password, role, tel])
+    if (rows.affectedRows > 0) {
       return {
-        message: '账号已存在',
+        message: '注册成功',
+        error: -1,
+      }
+    } else {
+      return {
+        message: '服务器繁忙',
         error: -2
       }
     }
@@ -64,5 +56,5 @@ async function insertGuser ({ code, password, role, tel }) {
 
 module.exports = {
   selectGUser,
-  insertGuser,
-};
+  insertGUser,
+}
