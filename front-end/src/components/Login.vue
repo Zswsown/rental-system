@@ -134,6 +134,8 @@ export default {
             data: data
           }).then(res => {
             if (res.data.error === 0) {
+              console.log("登陆成功", res.data)
+              self.$store.dispatch('insertUserInfo', res.data.data)
               message.success(res.data.message)
             } else {
               message.error(res.data.message)

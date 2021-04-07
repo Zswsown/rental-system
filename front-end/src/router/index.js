@@ -1,5 +1,5 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
+import Vue from "vue"
+import VueRouter from "vue-router"
 const Home = () => import("@/views/Home.vue")
 const EntireRent = () => import("@/views/EntireRent.vue")
 const ShareRent = () => import("@/views/ShareRent.vue")
@@ -17,7 +17,7 @@ VueRouter.prototype.push = function push (location) {
     return originalPush.call(this, location).catch(err => err)
 }
 
-Vue.use(VueRouter);
+Vue.use(VueRouter)
 
 const routes = [
     // 首页
@@ -67,7 +67,7 @@ const routes = [
     },
     // 编辑个人信息
     {
-        path: '/editPersonalInfo',
+        path: '/editPersonalInfo/:id',
         name: "EditPersonalInfo",
         component: EditPersonalInfo
     },
@@ -89,12 +89,12 @@ const routes = [
         name: "Collection",
         component: Collection
     }
-];
+]
 
 const router = new VueRouter({
     mode: "hash",
     // base: process.env.BASE_URL,
     routes,
-});
+})
 
-export default router;
+export default router
