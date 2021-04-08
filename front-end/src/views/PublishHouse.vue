@@ -42,7 +42,23 @@
               ></a-textarea>
             </a-form-model-item>
           </a-row>
-          <!-- 房屋地址 -->
+          <!-- 所在地区 -->
+          <a-row>
+            <a-form-model-item has-feedback label="所在地区">
+              <a-cascader
+                :options="provinceOptionList"
+                :load-data="loadData"
+                :field-names="{
+                  label: 'areaName',
+                  value: 'id',
+                  children: 'children',
+                }"
+                placeholder="请选择所在地区"
+                @change="getHouseArea"
+              />
+            </a-form-model-item>
+          </a-row>
+          <!-- 详细地址 -->
           <a-row>
             <a-form-model-item has-feedback label="房屋地址" prop="address">
               <a-textarea
@@ -129,6 +145,8 @@
 
 <script>
 import req from '@/api/req.js'
+import request from '@/api/request.js'
+import message from "ant-design-vue/lib/message"
 export default {
   name: "PublishHouse",
   data () {
@@ -148,6 +166,22 @@ export default {
         { label: '南', value: 'south' },
         { label: '北', value: 'north' }
       ],
+      // 省份列表
+      provinceList: [],
+      // 省份选项列表
+      provinceOptionList: [],
+      // 城市列表
+      cityList: [],
+      // 城市选项列表
+      cityOptionList: [],
+      // 区县列表
+      countryList: [],
+      // 区县选项列表
+      countryOptionList: [],
+      // 街道列表
+      areaList: [],
+      // 街道选项列表
+      areaOptionList: [],
       // 发布房源 表单布局
       layout: {
         labelCol: { span: 5 },
@@ -161,6 +195,14 @@ export default {
         desc: "",
         // 出租房间数量
         num: 1,
+        // 出租房省份id
+        province_id: '',
+        // 出租房城市id
+        city_id: '',
+        // 出租房区县id
+        country_id: '',
+        // 出租房街道id
+        area_id: '',
         // 房间地址
         address: "",
         // 出租房信息
@@ -215,23 +257,154 @@ export default {
           // this.visible = false
         } else {
           this.loading = false
-          console.log("请填写正确的房源发布信息");
+          console.log("请填写正确的房源发布信息")
           message.error("请填写正确的房源发布信息")
-          return false;
+          return false
         }
       })
     },
+    // 获取省份列表信息(初始)
+    getPrivinceList () {
+      let data = {
+        level: 1,
+        page: 0,
+      }
+      for (let i = 0; i < 4; i++) {
+        data.page++
+        request({
+          method: 'get',
+          url: '/areaName',
+          params: {
+            level: data.level,
+            page: data.page
+          },
+        }).then(res => {
+          this.provinceList = this.provinceList.concat(res.data.showapi_res_body.data)
+          this.provinceOptionList = this.provinceList.map(({ id, areaName, level }) => {
+            return {
+              id,
+              areaName,
+              // 省份级别不展开列表
+              isLeaf: !(level == 1)
+            }
+          })
+        }).catch(err => {
+          console.log(err)
+          message.error(err)
+        })
+      }
+    },
+    // 动态加载数据(第一次选择时会触发该函数，已经加载的数据不会再加载)
+    loadData (selectedOptions) {
+      const targetOption = selectedOptions[selectedOptions.length - 1]
+      // 加载标识
+      targetOption.loading = true
+      // 加载城市列表
+      if (selectedOptions.length === 1) {
+        request({
+          method: 'get',
+          url: '/areaDetail',
+          params: {
+            parentId: targetOption.id
+          },
+        }).then(res => {
+          let cityList = res.data.showapi_res_body.data.map(({ id, areaName, level }) => {
+            return {
+              id,
+              areaName,
+              // 不异步加载省份数据（已经初始化了）
+              isLeaf: level == 1
+            }
+          })
+          targetOption.loading = false
+          targetOption.children = cityList
+          this.provinceOptionList = [...this.provinceOptionList]
+        }).catch(err => {
+          targetOption.loading = false
+          console.log("城市列表加载失败", err)
+          message.error("城市列表加载失败")
+        })
+      }
+      // 加载区县列表
+      else if (selectedOptions.length === 2) {
+        request({
+          method: 'get',
+          url: '/areaDetail',
+          params: {
+            parentId: targetOption.id
+          },
+        }).then(res => {
+          let countryList = res.data.showapi_res_body.data.map(({ id, areaName, level }) => {
+            return {
+              id,
+              areaName,
+              isLeaf: level == 1
+            }
+          })
+          targetOption.loading = false
+          targetOption.children = countryList
+          this.provinceOptionList = [...this.provinceOptionList]
+        }).catch(err => {
+          targetOption.loading = false
+          console.log("区县列表加载失败", err)
+          message.error("区县列表加载失败")
+        })
+      }
+      // 加载街道列表
+      else if (selectedOptions.length === 3) {
+        request({
+          method: 'get',
+          url: '/areaDetail',
+          params: {
+            parentId: targetOption.id
+          },
+        }).then(res => {
+          let areaList = res.data.showapi_res_body.data.map(({ id, areaName }) => {
+            return {
+              id,
+              areaName,
+            }
+          })
+          targetOption.loading = false
+          targetOption.children = areaList
+          this.provinceOptionList = [...this.provinceOptionList]
+        }).catch(err => {
+          targetOption.loading = false
+          console.log("街道列表加载失败", err)
+          message.error("街道列表加载失败")
+        })
+      }
+      // console.log(targetOption, selectedOptions)
+    },
+    // 省市区街道 选择完毕
+    getHouseArea (value, selectedOptions) {
+      console.log(value, selectedOptions)
+      this.publishHouseForm.province_id = value[0]
+      this.publishHouseForm.city_id = value[1]
+      this.publishHouseForm.country_id = value[2]
+      this.publishHouseForm.area_id = value[3]
+    },
+    clean () {
+      this.provinceList = []
+    },
+    mounted_init () {
+      this.clean
+      this.getPrivinceList()
+    }
   },
   computed: {
+    // 获取用户身份信息
     userInfo () {
-      return this.$store.state.userInfo;
-    }
+      return this.$store.state.userInfo
+    },
+  },
+  mounted () {
+    this.mounted_init()
   },
   watch: {
     // 出租房数量 与 出租房信息的个数 一样多
     num (newValue, oldValue) {
       let rentalHouseList = []
-      console.log(newValue, oldValue)
       for (let i = 0; i < newValue; i++) {
         rentalHouseList.push({
           area: 0,
