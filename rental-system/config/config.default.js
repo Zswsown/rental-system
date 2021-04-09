@@ -1,6 +1,6 @@
 /* eslint valid-jsdoc: "off" */
 
-'use strict';
+'use strict'
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
@@ -10,13 +10,13 @@ module.exports = function (appInfo) {
    * built-in config
    * @type {Egg.EggAppConfig}
    **/
-  const config = exports = {};
+  const config = exports = {}
 
   // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1617716464823_6406';
+  config.keys = appInfo.name + '_1617716464823_6406'
 
   // add your middleware config here
-  config.middleware = [];
+  config.middleware = []
 
   // jwt登录鉴权配置
   config.jwt = {
@@ -32,20 +32,20 @@ module.exports = function (appInfo) {
       ignoreJSON: true,
     },
     domainWhiteList: ['http://localhost:8080'],//允许访问接口的白名单
-  };
+  }
   // 跨域详细配置
   config.cors = {
     origin: '*',
     allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS',//允许的请求方法
-  };
+  }
 
   // add your user config here
   const userConfig = {
-    // myAppName: 'egg',
-  };
+
+  }
 
   return {
     ...config,
     ...userConfig,
-  };
-};
+  }
+}

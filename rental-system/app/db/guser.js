@@ -8,19 +8,24 @@ async function selectGUser ({ code, password, role }) {
     const [rows, fields] = await pool.query(sql, [code, password, role])
     if (rows.length === 0) {
       return {
-        message: '账号为空',
-        error: -2,
+        msg: '账号不存在',
+        data: null,
+        code: 5003
       }
     } else {
       return {
-        message: '登录成功',
-        error: 0,
-        data: rows[0]
+        msg: '登录成功',
+        data: rows[0],
+        code: 200
       }
     }
   }
   catch (err) {
-    return err
+    return {
+      msg: '服务器报错了',
+      data: err,
+      code: 5004
+    }
   }
 }
 
@@ -31,13 +36,15 @@ async function insertGUser ({ code, password, role, tel }) {
     const [rows, fields] = await pool.query(sql, [code, password, role, tel])
     if (rows.affectedRows > 0) {
       return {
-        message: '注册成功',
-        error: -1,
+        msg: '注册成功',
+        data: rows[0],
+        code: 500
       }
     } else {
       return {
-        message: '服务器繁忙',
-        error: -2
+        msg: '服务器繁忙',
+        data: null,
+        code: 5005
       }
     }
   }
@@ -45,12 +52,17 @@ async function insertGUser ({ code, password, role, tel }) {
     if (err.code != null) {
       if (err.code === "ER_DUP_ENTRY") {
         return {
-          message: '账号已存在',
-          error: -2
+          msg: '账号已存在',
+          data: null,
+          code: 5006
         }
       }
     }
-    return err
+    return {
+      msg: '服务器报错了',
+      data: null,
+      code: 5004
+    }
   }
 }
 

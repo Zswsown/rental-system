@@ -126,10 +126,10 @@ export default {
             url: "/api/register",
             data: data
           }).then(res => {
-            if (res.data.error === -1) {
-              message.success(res.data.message)
+            if (res.data.code === 500) {
+              message.success(res.data.msg)
             } else {
-              message.error(res.data.message)
+              message.error(res.data.msg)
             }
             this.visible = false
             this.$refs.registerForm.resetFields()

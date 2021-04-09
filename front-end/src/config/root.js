@@ -43,6 +43,7 @@ export default {
         icon: 'notification'
     },
     ],
+    // 房源状态
     statusKeyValue: {
         disRented: {
             color: '#1890ff',

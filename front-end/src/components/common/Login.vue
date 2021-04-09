@@ -79,9 +79,12 @@
 </template>
 
 <script>
+import message from "ant-design-vue/lib/message"
 import req from '@/api/req.js'
 import { getVerificationCode } from "@/config/util.js"
-import message from "ant-design-vue/lib/message"
+import storage from "@/config/storage.js"
+import cookie from "@/config/cookie.js"
+
 
 export default {
   name: "Login",
@@ -133,13 +136,15 @@ export default {
             url: "/api/login",
             data: data
           }).then(res => {
-            if (res.data.error === 0) {
+            if (res.data.code === 200) {
               console.log("登陆成功", res.data)
               self.$store.dispatch('insertUserInfo', res.data.data)
+              console.log(cookie.getCookie('rental_system_token'))
+              storage.localStorage.setItem('rental_system_token', cookie.getCookie('rental_system_token'))
               self.visible = false
-              message.success(res.data.message)
+              message.success(res.data.msg)
             } else {
-              message.error(res.data.message)
+              message.error(res.data.msg)
             }
             self.$refs.loginForm.resetFields()
           }).catch(err => {

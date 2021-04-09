@@ -249,9 +249,17 @@ export default {
             url: "/api/house/publishHouse",
             data: data
           }).then(res => {
-            console.log(res)
+            if (res.data.code === 500) {
+              message.success(res.data.msg)
+              console.log(res)
+            }
+            else {
+              message.error(res.data.msg)
+              console.log(res)
+            }
           }).catch(err => {
             console.log(err)
+            message.error(error)
           })
           // message.success("注册成功");
           // this.visible = false
@@ -384,9 +392,11 @@ export default {
       this.publishHouseForm.country_id = value[2]
       this.publishHouseForm.area_id = value[3]
     },
+    // 清空
     clean () {
       this.provinceList = []
     },
+    // 页面构建时初始化
     mounted_init () {
       this.clean
       this.getPrivinceList()

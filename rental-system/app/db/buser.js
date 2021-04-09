@@ -8,35 +8,40 @@ async function selectBUser ({ code, password, role }) {
     const [rows, fields] = await pool.query(sql, [code, password, role])
     if (rows.length === 0) {
       return {
-        message: '账号为空',
-        error: -2,
+        msg: 'not exist',
+        code: 5003,
+        data: null
       }
     } else {
       if (rows[0].status === "reviewing") {
         return {
-          message: '账号审核中',
-          error: -1,
-          data: rows[0]
+          msg: '账号审核中',
+          code: 5007,
+          data: null
         }
       }
       else if (rows[0].status === "refused") {
         return {
-          message: '注册账号被拒绝',
-          error: -2,
-          data: rows[0]
+          msg: '注册账号被拒绝',
+          code: 5008,
+          data: null
         }
       }
       else if (rows[0].status === "success") {
         return {
-          message: '登录成功',
-          error: 0,
+          msg: '登录成功',
+          code: 200,
           data: rows[0]
         }
       }
     }
   }
   catch (err) {
-    return err
+    return {
+      msg: '服务器报错了',
+      data: err,
+      code: 5004
+    }
   }
 }
 
@@ -47,13 +52,15 @@ async function insertBUser ({ code, password, role, tel }) {
     const [rows, fields] = await pool.query(sql, [code, password, role, tel, 'reviewing'])
     if (rows.affectedRows > 0) {
       return {
-        message: '提交注册成功,等待管理员审核',
-        error: -1
+        msg: '提交注册成功,等待管理员审核',
+        code: 500,
+        data: rows
       }
     } else {
       return {
-        message: '服务器繁忙',
-        error: -2
+        msg: '服务器繁忙',
+        data: null,
+        code: 5005
       }
     }
   }
@@ -61,8 +68,9 @@ async function insertBUser ({ code, password, role, tel }) {
     if (err.code != null) {
       if (err.code === "ER_DUP_ENTRY") {
         return {
-          message: '账号已存在',
-          error: -2
+          msg: '账号已存在',
+          data: null,
+          code: 5006
         }
       }
     }
@@ -79,33 +87,32 @@ async function updateBuser ({ code, password, role, tel, status }) {
       const [rows, fields] = await pool.query(sql, [code, password, role, tel, status])
       if (rows.affectedRows > 0) {
         return {
-          message: '更新成功',
-          error: 0
+          msg: '更新成功',
+          code: 500,
+          data: rows
         }
       } else {
         return {
-          message: '服务器繁忙',
-          error: -2
+          msg: '服务器繁忙',
+          data: null,
+          code: 5005
         }
       }
     }
     else {
       return {
-        message: '更新失败',
-        error: -2
+        msg: '更新失败',
+        code: 5009,
+        data: null
       }
     }
   }
   catch (err) {
-    if (err.code != null) {
-      if (err.code === "ER_DUP_ENTRY") {
-        return {
-          message: '更新失败',
-          error: -2
-        }
-      }
+    return {
+      msg: '服务器报错了',
+      data: null,
+      code: 5004
     }
-    return err
   }
 }
 

@@ -7,21 +7,23 @@ async function insertHouse ({ province_id, city_id, country_id, area_id, type, n
     const [rows, fields] = await pool.query(sql, [province_id, city_id, country_id, area_id, type, num, desc, address, userInfo.id, 0])
     if (rows.affectedRows > 0) {
       return {
-        message: '发布房源成功',
-        error: 0,
+        msg: '发布房源成功',
+        code: 500,
         data: rows
       }
     } else {
       return {
-        message: '服务器繁忙',
-        error: -2
+        msg: '服务器繁忙',
+        data: null,
+        code: 5005
       }
     }
   }
   catch (err) {
     return {
-      message: err,
-      error: -2
+      msg: '服务器报错了',
+      data: null,
+      code: 5004
     }
   }
 }
@@ -35,21 +37,23 @@ async function insertRentalHouse ({ house_id, type, userInfo, rentalHouse }) {
     const [rows, fields] = await pool.query(sql, [params])
     if (rows.affectedRows > 0) {
       return {
-        message: '发布出租房成功',
-        error: 0,
+        msg: '发布出租房成功',
+        code: 500,
         data: rows
       }
     } else {
       return {
-        message: '服务器繁忙',
-        error: -2
+        msg: '服务器繁忙',
+        data: null,
+        code: 5005
       }
     }
   }
   catch (err) {
     return {
-      message: err,
-      error: -2
+      msg: '服务器报错了',
+      data: null,
+      code: 5004
     }
   }
 }
