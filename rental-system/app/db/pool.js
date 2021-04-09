@@ -12,6 +12,7 @@ const pool = mysql.createPool({
   password: dbConfig.PASSWORD,//密码
   database: dbConfig.DATABASE,//数据库
   connectionLimit: dbConfig.CONNECTION_LIMIT,//限制连接的最大数量
+  multipleStatements: true,//多语句查询
 });
 
 module.exports = pool;

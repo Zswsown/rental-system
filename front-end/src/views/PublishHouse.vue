@@ -246,7 +246,7 @@ export default {
           console.log("发布的房源信息：", data)
           req({
             method: "POST",
-            api: "/api/buser/publishHouse",
+            url: "/api/house/publishHouse",
             data: data
           }).then(res => {
             console.log(res)
@@ -407,11 +407,11 @@ export default {
       let rentalHouseList = []
       for (let i = 0; i < newValue; i++) {
         rentalHouseList.push({
-          area: 0,
+          area: 1,
           direct: "east",
           desc: "",
           tag: [],
-          price: 0,
+          price: 1,
           // picURL: []
         })
       }
