@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import storage from "@/config/storage"
+import message from "ant-design-vue/lib/message"
 export default {
   name: "GUserPersonalCenter",
   computed: {
@@ -30,7 +32,11 @@ export default {
     },
     // 退出账号
     exit () {
+      // 清除localstorage中的token
+      storage.localStorage.removeItem('rental_system_token')
+      // 清除vuex中的用户信息
       this.$store.dispatch('cleanUserInfo')
+      message.success("账号退出成功!")
       this.$router.push('/')
     }
   }

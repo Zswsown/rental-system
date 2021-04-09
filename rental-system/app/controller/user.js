@@ -1,5 +1,6 @@
 'use strict'
 const Controller = require('../core/base_controller')
+const { TOKEN_CONFIG } = require('../public/jwt')
 class UserController extends Controller {
   // 注册
   async register () {
@@ -17,10 +18,20 @@ class UserController extends Controller {
     const { ctx } = this
     const { code, password, role } = ctx.request.body
     if (role === "guser") {
+      ctx.body = ctx.header
       const data = await ctx.service.guser.login({ code, password, role })
       if (data.token != null) {
+        // 设置cookie
+        ctx.cookies.set('rental_system_token', data.token, {
+          httpOnly: TOKEN_CONFIG.HTTP_ONLY,
+          secure: TOKEN_CONFIG.SECURE,
+          expires: new Date(new Date().getTime() + 8 * 60 * 60 * 1000 + TOKEN_CONFIG.EXPIRES),
+          // SameSite: TOKEN_CONFIG.SAMESITE
+        })
+        // 设置请求头 跨域
+        ctx.set("Access-Control-Allow-Origin", ctx.header.origin)
+        ctx.set("Access-Control-Allow-Credentials", true)
         ctx.body = data.user
-        ctx.cookies.set('rental_system_token', data.token, { maxAge: 1000 * 3600 * 24 * 7 })//默认token有效时长为7天,7*24*60*60
       }
       else {
         ctx.body = data.user
@@ -30,6 +41,24 @@ class UserController extends Controller {
       ctx.body = await ctx.service.buser.login({ code, password, role })
     }
   }
+  // 获取用户信息
+  async getUserInfo () {
+    const { ctx } = this
+    const res = ctx.helper.getUserInfo()
+    if (res.data != null) {
+      if (res.data.role == 'guser') {
+        ctx.body = await ctx.service.guser.getGuserInfo(res.data.guserId)
+      }
+      else if (res.data.role == 'buser') {
+        ctx.body = ctx.service.buser.getBuserInfo(res.data.buserId)
+      }
+    }
+    else {
+      ctx.body = { msg: '用户未登录', code: 200, data: null }
+    }
+  }
+
+
 }
 module.exports = UserController
 

@@ -66,7 +66,35 @@ async function insertGUser ({ code, password, role, tel }) {
   }
 }
 
+async function selectGUserById (id) {
+  try {
+    const sql = 'SELECT * FROM guser WHERE `id` = ?'
+    const [rows, fields] = await pool.query(sql, [id])
+    if (rows.length === 0) {
+      return {
+        msg: '账号不存在',
+        data: null,
+        code: 5003
+      }
+    } else {
+      return {
+        msg: '获取用户信息成功',
+        data: rows[0],
+        code: 200
+      }
+    }
+  }
+  catch (err) {
+    return {
+      msg: '服务器报错了',
+      data: err,
+      code: 5004
+    }
+  }
+}
+
 module.exports = {
   selectGUser,
   insertGUser,
+  selectGUserById
 }

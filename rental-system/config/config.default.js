@@ -35,7 +35,8 @@ module.exports = function (appInfo) {
   }
   // 跨域详细配置
   config.cors = {
-    origin: '*',
+    credentials: true,// 允许携带认证，携带cookie时的跨域一定要开启
+    origin: 'http://localhost:8080', // 允许访问的origin，认证时不能为 '*'
     allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS',//允许的请求方法
   }
 

@@ -1,7 +1,7 @@
 'use strict'
 // jwt登录鉴权
 const jwt = require('jsonwebtoken') //引入jsonwebtoken
-const { JWT_SECRET_KEY } = require('../public/jwt') // jwt加密秘钥
+const { JWT_CONFIG } = require('../public/jwt') // jwt加密秘钥
 
 module.exports = (options, app) => {
   // 用户登录拦截器
@@ -25,7 +25,7 @@ module.exports = (options, app) => {
 function verifyToken (token) {
   let res = ''
   try {
-    const result = jwt.verify(token, JWT_SECRET_KEY, { algorithms: ['RS256'] })
+    const result = jwt.verify(token, JWT_CONFIG.SECRET_KEY, { algorithms: ['HS256'] })
     res = result.data
   } catch (e) {
     console.log(e)

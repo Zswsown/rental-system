@@ -1,6 +1,7 @@
 'use strict'
 const Service = require('egg').Service
 const buser = require("../db/buser")
+const jwt = require('jsonwebtoken') //引入jsonwebtoken
 const { JWT_SECRET_KEY } = require('../public/jwt') // jwt加密秘钥
 class BUserService extends Service {
   async register ({ code, password, role, tel }) {
@@ -15,7 +16,7 @@ class BUserService extends Service {
     const { app } = this
     const user = await buser.selectBUser({ code, password, role })
     if (user.code === 200) {
-      const token = app.jwt.sign({
+      const token = jwt.sign({
         buserId: user.data.id
       }, JWT_SECRET_KEY)
       return {
@@ -24,6 +25,10 @@ class BUserService extends Service {
       }
     }
     return { user }
+  }
+  async getBuserInfo (id) {
+    const user = await buser.selectBUser({ code, password, role })
+
   }
 }
 

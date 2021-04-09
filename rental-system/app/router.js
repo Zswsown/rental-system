@@ -5,6 +5,7 @@
  */
 module.exports = app => {
   const { router, controller, middleware } = app
+  router.get('/api/getUserInfo', controller.user.getUserInfo)
   router.post('/api/register', controller.user.register)
   router.post('/api/login', controller.user.login)
   router.post('/api/house/publishHouse', middleware.jwt(), controller.house.insertHouse)

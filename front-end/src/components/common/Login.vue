@@ -85,7 +85,6 @@ import { getVerificationCode } from "@/config/util.js"
 import storage from "@/config/storage.js"
 import cookie from "@/config/cookie.js"
 
-
 export default {
   name: "Login",
   data () {
@@ -138,22 +137,26 @@ export default {
           }).then(res => {
             if (res.data.code === 200) {
               console.log("登陆成功", res.data)
+              // 将用户信息存进vuex
               self.$store.dispatch('insertUserInfo', res.data.data)
-              console.log(cookie.getCookie('rental_system_token'))
+              // 后端将token以cookie的形式发给前端，前端取出cookie，保存在浏览器的localStorage中（防止存在vuex中，点击浏览器刷新按钮，数据会被清掉）
               storage.localStorage.setItem('rental_system_token', cookie.getCookie('rental_system_token'))
               self.visible = false
               message.success(res.data.msg)
             } else {
               message.error(res.data.msg)
+              // 当提交表单信息错误时，刷新验证码
+              self.validateVerificationCode = self.getVerificationCode()
             }
+            // 重置表单
             self.$refs.loginForm.resetFields()
           }).catch(err => {
-            message.error(err)
+            message.error("登录报错", err)
+            // 重置表单
             self.$refs.loginForm.resetFields()
           })
         } else {
           self.loading = false
-          console.log("请填写正确的登录信息")
           message.error("请填写正确的登录信息")
           return false
         }
@@ -175,7 +178,7 @@ export default {
     }
   },
   watch: {
-    // 验证码更新
+    // 登录框显示关闭时，验证码更新
     visible (newValue, oldValue) {
       if (newValue) {
         this.verificationCode = getVerificationCode()

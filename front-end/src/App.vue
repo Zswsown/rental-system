@@ -84,6 +84,8 @@
 
 <script>
 import root from "@/config/root.js"
+import req from "@/api/req"
+
 import Login from "@/components/common/Login.vue"
 import Register from '@/components/common/Register.vue'
 import GUserPersonalCenter from '@/components/GUser/GUserPersonalCenter'
@@ -96,11 +98,6 @@ export default {
     Register,
     GUserPersonalCenter,
     BUserPersonalCenter
-  },
-  data () {
-    return {
-
-    }
   },
   computed: {
     // 系統导航菜单
@@ -122,7 +119,24 @@ export default {
       console.log("跳转的路由为：", item.path)
       this.$router.push(item.path)
     },
-  }
+    // 用户点击浏览器刷新按钮时，重新请求用户信息，若token未过期，则将请求的数据放入vuex中
+    getUserInfo () {
+      req({
+        method: 'get',
+        url: '/api/getUserInfo'
+      }).then(res => {
+        console.log(res)
+        // 将用户信息存进vuex
+        this.$store.dispatch('insertUserInfo', res.data.user.data)
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+  },
+  created () {
+    // 获取用户信息
+    this.getUserInfo()
+  },
 }
 </script>
 

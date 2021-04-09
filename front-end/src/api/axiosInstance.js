@@ -6,11 +6,13 @@ const axiosInstance = ({ baseURL, headers }) => {
     headers,
     timeout: 600000
   })
+  // 默认携带认证
+  instance.defaults.withCredentials = true
   // 添加请求拦截器
   instance.interceptors.request.use(function (config) {
     // 在发送请求之前 查看本地有无token，有就携带上
     if (storage.localStorage.getItem("rental_system_token")) {
-      config.headers.common['Authorization'] = 'Bearer ' + storage.timeStorage.getItem("rental_system_token")
+      config.headers.common['Authorization'] = 'Bearer ' + storage.localStorage.getItem("rental_system_token")
     }
     console.log(config)
     return config
