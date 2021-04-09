@@ -1,5 +1,8 @@
-
+// 路由配置信息
 export const routes = [
+  /*
+    不需登录就可以使用的功能
+  */
   // 首页
   {
     path: "/",
@@ -22,18 +25,10 @@ export const routes = [
     name: "ShareRent",
     component: () => import("@/views/ShareRent.vue")
   },
-  // 发布房源
-  {
-    path: "/publishHouse",
-    name: "PublishHouse",
-    component: () => import("@/views/PublishHouse.vue")
-  },
-  // 举报虚假房源
-  {
-    path: "/reportFakeHouse",
-    name: "ReportFakeHouse",
-    component: () => import("@/views/ReportFakeHouse.vue")
-  },
+
+  /*
+    租户和房源管家共有的权限
+  */
   // 反馈意见
   {
     path: "/advice",
@@ -46,6 +41,32 @@ export const routes = [
     name: "EditPersonalInfo",
     component: () => import('@/components/common/EditPersonalInfo.vue')
   },
+
+  /*
+    租户特有的权限
+  */
+  // 举报虚假房源
+  {
+    path: "/reportFakeHouse",
+    name: "ReportFakeHouse",
+    component: () => import("@/views/ReportFakeHouse.vue")
+  },
+  // 收藏房源
+  {
+    path: '/collection',
+    name: "Collection",
+    component: () => import('@/views/Collection.vue')
+  },
+
+  /* 
+    房源管家特有的权限
+  */
+  // 发布房源
+  {
+    path: "/publishHouse",
+    name: "PublishHouse",
+    component: () => import("@/views/PublishHouse.vue")
+  },
   // 编辑房屋状态
   {
     path: '/editHouseState/:role/:id',
@@ -57,11 +78,5 @@ export const routes = [
     path: '/editHouseInfo/:role/:id',
     name: "EditHouseInfo",
     component: () => import('@/components/BUser/EditHouseInfo.vue')
-  },
-  // 收藏房源
-  {
-    path: '/collection',
-    name: "Collection",
-    component: () => import('@/views/Collection.vue')
   }
 ]

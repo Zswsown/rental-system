@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import storage from "@/config/storage"
+import message from "ant-design-vue/lib/message"
 export default {
   name: "BUserPersonalCenter",
   computed: {

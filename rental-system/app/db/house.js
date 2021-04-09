@@ -1,10 +1,10 @@
 'use strict'
 const pool = require("./pool")
 // 新增房源信息
-async function insertHouse ({ province_id, city_id, country_id, area_id, type, num, desc, address, userInfo }) {
+async function insertHouse ({ province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, type, num, desc, address, userInfo }) {
   try {
-    const sql = 'INSERT INTO house (`province_id`, `city_id`, `country_id`, `area_id`, `type`, `num`, `desc`, `address`, `buser_id`,`is_del`) values(?,?,?,?,?,?,?,?,?,?)'
-    const [rows, fields] = await pool.query(sql, [province_id, city_id, country_id, area_id, type, num, desc, address, userInfo.id, 0])
+    const sql = 'INSERT INTO house (`province_id`, `city_id`, `country_id`, `area_id`, `province_name`, `city_name`, `country_name`, `area_name`,`type`, `num`, `desc`, `address`, `buser_id`,`is_del`) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
+    const [rows, fields] = await pool.query(sql, [province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, type, num, desc, address, userInfo.id, 0])
     if (rows.affectedRows > 0) {
       return {
         msg: '发布房源成功',
@@ -22,7 +22,7 @@ async function insertHouse ({ province_id, city_id, country_id, area_id, type, n
   catch (err) {
     return {
       msg: '服务器报错了',
-      data: null,
+      data: err,
       code: 5004
     }
   }

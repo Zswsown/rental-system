@@ -19,7 +19,10 @@
           <!-- 出租方式 -->
           <a-row>
             <a-form-model-item has-feedback label="出租方式" prop="type">
-              <a-select v-model="publishHouseForm.type">
+              <a-select
+                v-model="publishHouseForm.type"
+                @change="selectReantalType"
+              >
                 <a-select-option v-for="item in typeList" :key="item.value">
                   {{ item.label }}
                 </a-select-option>
@@ -82,7 +85,12 @@
               :key="`rentalHouse` + index"
             >
               <a-row>
-                <h3 style="font-weight: 700">第{{ index + 1 }}间出租房信息</h3>
+                <h3
+                  style="font-weight: 700"
+                  v-show="publishHouseForm.type != 'entire'"
+                >
+                  第{{ index + 1 }}间出租房信息
+                </h3>
               </a-row>
               <!-- 房间面积 -->
               <a-form-model-item has-feedback label="房间面积">
@@ -203,6 +211,14 @@ export default {
         country_id: '',
         // 出租房街道id
         area_id: '',
+        // 出租房省份id
+        province_name: '',
+        // 出租房城市id
+        city_name: '',
+        // 出租房区县id
+        country_name: '',
+        // 出租房街道id
+        area_name: '',
         // 房间地址
         address: "",
         // 出租房信息
@@ -270,6 +286,27 @@ export default {
           return false
         }
       })
+    },
+    // 选择出租方式
+    selectReantalType (value) {
+      if (value === 'entire') {
+        this.publishHouseForm.rentalHouse = [
+          {
+            // 房间面积
+            area: 0,
+            // 房间朝向
+            direct: "east",
+            // 房间描述
+            desc: "",
+            // 房间标签
+            tag: [],
+            // 房间出租价格
+            price: 0,
+            // 房间照片
+            // picURL: []
+          }
+        ]
+      }
     },
     // 获取省份列表信息(初始)
     getPrivinceList () {
@@ -391,6 +428,10 @@ export default {
       this.publishHouseForm.city_id = value[1]
       this.publishHouseForm.country_id = value[2]
       this.publishHouseForm.area_id = value[3]
+      this.publishHouseForm.province_name = selectedOptions[0].areaName
+      this.publishHouseForm.city_name = selectedOptions[1].areaName
+      this.publishHouseForm.country_name = selectedOptions[2].areaName
+      this.publishHouseForm.area_name = selectedOptions[3].areaName
     },
     // 清空
     clean () {
@@ -414,19 +455,21 @@ export default {
   watch: {
     // 出租房数量 与 出租房信息的个数 一样多
     num (newValue, oldValue) {
-      let rentalHouseList = []
-      for (let i = 0; i < newValue; i++) {
-        rentalHouseList.push({
-          area: 1,
-          direct: "east",
-          desc: "",
-          tag: [],
-          price: 1,
-          // picURL: []
-        })
+      if (this.publishHouseForm.type != 'entire') {
+        let rentalHouseList = []
+        for (let i = 0; i < newValue; i++) {
+          rentalHouseList.push({
+            area: 1,
+            direct: "east",
+            desc: "",
+            tag: [],
+            price: 1,
+            // picURL: []
+          })
+        }
+        this.publishHouseForm.rentalHouse = rentalHouseList
       }
-      this.publishHouseForm.rentalHouse = rentalHouseList
-    }
+    },
   }
 }
 </script>

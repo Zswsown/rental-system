@@ -9,28 +9,19 @@ module.exports = (options, app) => {
     let authToken = ctx.header.authorization // 获取header里的Authorization
     if (authToken) {
       authToken = authToken.substring(7) // 取Authorization中的`Bearer `后的token
-      const res = verifyToken(authToken) // 解密前端发送过来的Token
-      if (res.buserId || res.guserId) {
+      const res = jwt.verify(authToken, JWT_CONFIG.SECRET_KEY, { algorithms: ['HS256'] }) // 解密前端发送过来的Token
+      const { exp } = res // token结束时间
+      const current = Math.floor(Date.now() / 1000) //当前时间
+      if (current <= exp) { // 验证 token 是否失效
         await next()
-      } else {
+      }
+      else {
         ctx.body = { code: 5001, msg: '登录状态已过期' }
       }
     } else {
       ctx.body = { code: 5002, msg: '请登陆后再进行操作' }
     }
   }
-}
-
-// 解密token
-function verifyToken (token) {
-  let res = ''
-  try {
-    const result = jwt.verify(token, JWT_CONFIG.SECRET_KEY, { algorithms: ['HS256'] })
-    res = result.data
-  } catch (e) {
-    console.log(e)
-  }
-  return res
 }
 
 // module.exports = (options, app) => {
