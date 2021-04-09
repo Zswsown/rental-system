@@ -18,16 +18,25 @@ module.exports = function (appInfo) {
   // add your middleware config here
   config.middleware = [];
 
+  // jwt登录鉴权配置
+  config.jwt = {
+    secret: 'Zswsown'//自定义token加密字符串
+  }
+
   // 跨域配置
+  // 安全配置
   config.security = {
+    // 跨站请求伪造
     csrf: {
       enable: false,
+      ignoreJSON: true,
     },
-    domainWhiteList: ['*'],
+    domainWhiteList: ['http://localhost:8080'],//允许访问接口的白名单
   };
+  // 跨域详细配置
   config.cors = {
     origin: '*',
-    allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS',
+    allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS',//允许的请求方法
   };
 
   // add your user config here
