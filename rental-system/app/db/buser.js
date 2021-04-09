@@ -8,7 +8,7 @@ async function selectBUser ({ code, password, role }) {
     const [rows, fields] = await pool.query(sql, [code, password, role])
     if (rows.length === 0) {
       return {
-        msg: 'not exist',
+        msg: '账号不存在',
         code: 5003,
         data: null
       }
@@ -116,8 +116,37 @@ async function updateBuser ({ code, password, role, tel, status }) {
   }
 }
 
+async function selectBUserById (id) {
+  try {
+    const sql = 'SELECT * FROM buser WHERE `id` = ?'
+    const [rows, fields] = await pool.query(sql, [id])
+    if (rows.length === 0) {
+      return {
+        msg: '账号不存在',
+        data: null,
+        code: 5003
+      }
+    } else {
+      return {
+        msg: '获取用户信息成功',
+        data: rows[0],
+        code: 200
+      }
+    }
+  }
+  catch (err) {
+    return {
+      msg: '服务器报错了',
+      data: err,
+      code: 5004
+    }
+  }
+}
+
+
 module.exports = {
   selectBUser,
   insertBUser,
   updateBuser,
+  selectBUserById
 }
