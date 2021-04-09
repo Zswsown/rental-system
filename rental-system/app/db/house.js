@@ -28,23 +28,23 @@ async function insertHouse ({ province_id, city_id, country_id, area_id, type, n
 // 新增出租房间信息
 async function insertRentalHouse ({ house_id, type, userInfo, rentalHouse }) {
   try {
-    const sql = 'INSERT INTO rental_house (`house_id`,`buser_id`,`type`,`desc`,`area`,`tag`,`direct`,`price`,`is_del`) values (?,?,?,?,?,?,?,?,?)'
+    const sql = 'INSERT INTO rent_house (`house_id`,`buser_id`,`type`,`desc`,`area`,`tag`,`direct`,`price`,`is_del`,`status`) values ?'
     let buser_id = userInfo.id
-    const params = rentalHouse.map((house) => { return [house_id, buser_id, type, house.desc, house.area, house.tag.toString(), house.direct, house.price, 0] })
-    return params
-    //   const [rows, fields] = await pool.query(sql, params)
-    //   if (rows.affectedRows > 0) {
-    //     return {
-    //       message: '发布出租房成功',
-    //       error: 0,
-    //       data: rows
-    //     }
-    //   } else {
-    //     return {
-    //       message: '服务器繁忙',
-    //       error: -2
-    //     }
-    //   }
+    const params = rentalHouse.map((house) => { return [house_id, buser_id, type, house.desc, house.area, house.tag.toString(), house.direct, house.price, 0, `disRented`] })
+    // return params
+    const [rows, fields] = await pool.query(sql, [params])
+    if (rows.affectedRows > 0) {
+      return {
+        message: '发布出租房成功',
+        error: 0,
+        data: rows
+      }
+    } else {
+      return {
+        message: '服务器繁忙',
+        error: -2
+      }
+    }
   }
   catch (err) {
     return {
