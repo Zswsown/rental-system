@@ -35,16 +35,6 @@
               <a-input-number v-model="num" :min="1" />
             </a-form-model-item>
           </a-row>
-          <!-- 房屋描述 -->
-          <a-row>
-            <a-form-model-item has-feedback label="房屋描述" prop="desc">
-              <a-textarea
-                v-model="publishHouseForm.desc"
-                :rows="2"
-                placeholder="请输入房屋描述"
-              ></a-textarea>
-            </a-form-model-item>
-          </a-row>
           <!-- 所在地区 -->
           <a-row>
             <a-form-model-item has-feedback label="所在地区">
@@ -71,6 +61,43 @@
               ></a-textarea>
             </a-form-model-item>
           </a-row>
+          <!-- 出租方式 -> 整租 -->
+          <a-row v-if="getRentalType">
+            <!-- 房间面积 -->
+            <a-form-model-item has-feedback label="房间面积">
+              <a-input-number v-model="publishHouseForm.area" :min="1" />
+              （单位：㎡）
+            </a-form-model-item>
+            <!-- 房间租金 -->
+            <a-form-model-item has-feedback label="租金(:元)">
+              <a-input-number v-model="publishHouseForm.price" :min="1" />
+            </a-form-model-item>
+            <!-- 房间朝向 -->
+            <a-form-model-item has-feedback label="房间朝向">
+              <a-select v-model="publishHouseForm.direct">
+                <a-select-option v-for="item in directList" :key="item.value">
+                  {{ item.label }}
+                </a-select-option>
+              </a-select>
+            </a-form-model-item>
+            <!-- 房间标签 -->
+            <a-form-model-item has-feedback label="房间标签">
+              <a-select
+                v-model="publishHouseForm.tag"
+                mode="tags"
+                placeholder="请输入房间的标签"
+              >
+              </a-select>
+            </a-form-model-item>
+            <!-- 房屋描述 -->
+            <a-form-model-item has-feedback label="房屋描述" prop="desc">
+              <a-textarea
+                v-model="publishHouseForm.desc"
+                :rows="2"
+                placeholder="请输入房屋描述"
+              ></a-textarea>
+            </a-form-model-item>
+          </a-row>
           <!-- 出租房信息 -->
           <a-row
             style="
@@ -79,18 +106,15 @@
               max-height: 500px;
               overflow: auto;
             "
+            v-if="!getRentalType"
           >
+            <!-- 出租方式-> 分租 -->
             <a-row
               v-for="(rentalHouse, index) in publishHouseForm.rentalHouse"
               :key="`rentalHouse` + index"
             >
               <a-row>
-                <h3
-                  style="font-weight: 700"
-                  v-show="publishHouseForm.type != 'entire'"
-                >
-                  第{{ index + 1 }}间出租房信息
-                </h3>
+                <h3 style="font-weight: 700">第{{ index + 1 }}间出租房信息</h3>
               </a-row>
               <!-- 房间面积 -->
               <a-form-model-item has-feedback label="房间面积">
@@ -163,7 +187,7 @@ export default {
       num: 1,
       // 出租方式 选项列表
       typeList: [
-        { label: '不限', value: 'all' },
+        // { label: '不限', value: 'all' },
         { label: '整租', value: 'entire' },
         { label: '分租', value: 'share' }
       ],
@@ -198,9 +222,7 @@ export default {
       // 发布房源 提交的表单
       publishHouseForm: {
         // 出租方式
-        type: "all",
-        // 描述
-        desc: "",
+        type: "entire",
         // 出租房间数量
         num: 1,
         // 出租房省份id
@@ -221,6 +243,20 @@ export default {
         area_name: '',
         // 房间地址
         address: "",
+
+        // 整租部分
+        // 房间面积
+        area: 0,
+        // 房间朝向
+        direct: "east",
+        // 房间标签
+        tag: [],
+        // 房间出租价格
+        price: 0,
+        // 描述
+        desc: "",
+
+        // 分租部分
         // 出租房信息
         rentalHouse: [
           {
@@ -253,32 +289,146 @@ export default {
       this.loading = true
       this.$refs.publishHouseForm.validate(valid => {
         if (valid) {
-          this.loading = false
-          let data = {
-            ...this.publishHouseForm,
-            num: this.num,
-            userInfo: this.userInfo
+          // 整租
+          if (this.publishHouseForm.type === 'entire') {
+            let {
+              type,
+              province_id,
+              city_id,
+              country_id,
+              area_id,
+              province_name,
+              city_name,
+              country_name,
+              area_name,
+              address,
+              area,
+              direct,
+              tag,
+              price,
+              desc,
+            } = this.publishHouseForm
+            let data = {
+              type,
+              province_id,
+              city_id,
+              country_id,
+              area_id,
+              province_name,
+              city_name,
+              country_name,
+              area_name,
+              address,
+              area,
+              direct,
+              tag,
+              price,
+              desc,
+              num: this.num,
+              userInfo: this.userInfo
+            }
+            console.log("发布的整租房源信息：", data)
+            req({
+              method: "POST",
+              url: "/api/house/publishEntireHouse",
+              data: data
+            }).then(res => {
+              this.loading = false
+              if (res.data.code === 500) {
+                message.success(res.data.msg)
+                this.$refs.publishHouseForm.resetFields()
+                console.log(res)
+              }
+              else {
+                this.loading = false
+                message.error(res.data.msg)
+                console.log(res)
+              }
+            }).catch(err => {
+              console.log(err)
+              message.error(error)
+            })
           }
-          console.log("发布的房源信息：", data)
-          req({
-            method: "POST",
-            url: "/api/house/publishHouse",
-            data: data
-          }).then(res => {
-            if (res.data.code === 500) {
-              message.success(res.data.msg)
-              console.log(res)
+          // 合租
+          else {
+            let {
+              type,
+              province_id,
+              city_id,
+              country_id,
+              area_id,
+              province_name,
+              city_name,
+              country_name,
+              area_name,
+              address,
+              rentalHouse
+            } = this.publishHouseForm
+            let data = {
+              type,
+              province_id,
+              city_id,
+              country_id,
+              area_id,
+              province_name,
+              city_name,
+              country_name,
+              area_name,
+              address,
+              rentalHouse,
+              num: this.num,
+              userInfo: this.userInfo
             }
-            else {
-              message.error(res.data.msg)
-              console.log(res)
-            }
-          }).catch(err => {
-            console.log(err)
-            message.error(error)
-          })
-          // message.success("注册成功");
-          // this.visible = false
+            console.log("发布的分租房源信息：", data)
+            req({
+              method: "POST",
+              url: "/api/house/publishShareHouse",
+              data: data
+            }).then(res => {
+              this.loading = false
+              if (res.data.code === 500) {
+                message.success(res.data.msg)
+                this.$refs.publishHouseForm.resetFields()
+                console.log(res)
+              }
+              else {
+                this.loading = false
+                message.error(res.data.msg)
+                console.log(res)
+              }
+            }).catch(err => {
+              this.loading = false
+              message.error(error)
+              console.log(err)
+            })
+          }
+          // let data = {
+          //   ...this.publishHouseForm,
+          //   num: this.num,
+          //   userInfo: this.userInfo
+          // }
+          // console.log("发布的房源信息：", data)
+          // req({
+          //   method: "POST",
+          //   url: "/api/house/publishHouse",
+          //   data: data
+          // }).then(res => {
+          //   this.loading = false
+          //   if (res.data.code === 500) {
+          //     message.success(res.data.msg)
+          //     this.num = 1
+          //     this.$refs.publishHouseForm.resetFields()
+          //     console.log(res)
+          //   }
+          //   else {
+          //     this.loading = false
+          //     message.error(res.data.msg)
+          //     console.log(res)
+          //   }
+          // }).catch(err => {
+          //   console.log(err)
+          //   message.error(error)
+          // })
         } else {
           this.loading = false
           console.log("请填写正确的房源发布信息")
@@ -448,6 +598,11 @@ export default {
     userInfo () {
       return this.$store.state.userInfo
     },
+
+    // 获取房源出租方式 ->默认整租
+    getRentalType () {
+      return this.publishHouseForm.type === 'entire'
+    }
   },
   mounted () {
     this.mounted_init()
@@ -455,20 +610,18 @@ export default {
   watch: {
     // 出租房数量 与 出租房信息的个数 一样多
     num (newValue, oldValue) {
-      if (this.publishHouseForm.type != 'entire') {
-        let rentalHouseList = []
-        for (let i = 0; i < newValue; i++) {
-          rentalHouseList.push({
-            area: 1,
-            direct: "east",
-            desc: "",
-            tag: [],
-            price: 1,
-            // picURL: []
-          })
-        }
-        this.publishHouseForm.rentalHouse = rentalHouseList
+      let rentalHouseList = []
+      for (let i = 0; i < newValue; i++) {
+        rentalHouseList.push({
+          area: 1,
+          direct: "east",
+          desc: "",
+          tag: [],
+          price: 1,
+          // picURL: []
+        })
       }
+      this.publishHouseForm.rentalHouse = rentalHouseList
     },
   }
 }

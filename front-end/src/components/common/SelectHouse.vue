@@ -13,9 +13,9 @@
         <a-col :span="23">
           <span>
             <a-checkbox-group
-              v-model="methods"
-              name="methodOptions"
-              :options="methodOptions"
+              v-model="types"
+              name="typeOptions"
+              :options="typeOptions"
             />
           </span>
         </a-col>
@@ -88,6 +88,7 @@
 </template>
 
 <script>
+import req from "@/api/req.js"
 import message from "ant-design-vue/lib/message"
 import HouseInfo from '@/components/common/HouseInfo.vue'
 export default {
@@ -98,12 +99,12 @@ export default {
   data () {
     return {
       filterSum: 22,
-      methodOptions: [
-        { label: '不限', value: 'all' },
+      typeOptions: [
+        // { label: '不限', value: 'all' },
         { label: '整租', value: 'entire' },
         { label: '合租', value: 'share' },
       ],
-      methods: [],
+      types: [],
       rentOptions: [
         { label: '≤1500', value: '0-1500' },
         { label: '1500-2000', value: '1500-2000' },
@@ -164,7 +165,21 @@ export default {
   methods: {
     changeTab (v) {
 
+    },
+    // 获取全部出租房源信息
+    getAllRentalHouse () {
+      req({
+        methods: 'get',
+        url: '/api/house/getAllRentalHouse'
+      }).then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
     }
+  },
+  mounted () {
+    this.getAllRentalHouse()
   }
 }
 </script>
