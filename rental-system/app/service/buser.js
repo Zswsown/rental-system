@@ -31,6 +31,7 @@ class BUserService extends Service {
     const user = await buser.selectBUserById(id)
     return { user }
   }
+
 }
 
 module.exports = BUserService

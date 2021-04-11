@@ -32,5 +32,9 @@ class GUserService extends Service {
     const user = await guser.selectGUserById(id)
     return { user }
   }
+  async updateGUser ({ id, nickname, tel, email, sex }) {
+    const user = await guser.updateGUser({ id, nickname, tel, email, sex })
+    return user
+  }
 }
 module.exports = GUserService

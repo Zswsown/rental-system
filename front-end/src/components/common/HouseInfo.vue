@@ -38,7 +38,7 @@
               <span style="padding: 0 8px">/</span>
               <span>{{ house.area }}㎡</span>
               <span style="padding: 0 8px">/</span>
-              <span>{{ house.direct }}</span>
+              <span>{{ house.directName }}</span>
               <span style="padding: 0 8px">/</span>
               <span>{{ house.desc }}</span>
             </span>

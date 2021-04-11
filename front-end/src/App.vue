@@ -12,7 +12,12 @@
           </a-col>
           <!-- 导航栏 -->
           <a-col :offset="5">
-            <a-menu mode="horizontal" theme="dark" class="app-nav">
+            <a-menu
+              :selected-keys="activeKey"
+              mode="horizontal"
+              theme="dark"
+              class="app-nav"
+            >
               <a-menu-item
                 v-for="item in navMenuData"
                 :key="item.path"
@@ -63,7 +68,7 @@
         <a-layout-sider theme="light" class="app-sider">
           <a-row type="flex" align="middle" style="height: 100%">
             <a-col>
-              <a-menu class="app-sider-menu">
+              <a-menu :selected-keys="activeKey" class="app-sider-menu">
                 <a-menu-item
                   v-for="item in siderMenuData"
                   :key="item.path"
@@ -111,6 +116,10 @@ export default {
     // 用户信息
     userInfo () {
       return this.$store.state.userInfo
+    },
+    // 获取激活的菜单项 -->根据路由判断
+    activeKey () {
+      return [this.$route.path]
     }
   },
   methods: {
@@ -151,7 +160,7 @@ export default {
 @media screen and (max-width: 1366px) {
   #app {
     width: 1366px;
-    height: 768px;
+    height: 635px;
   }
 }
 .app-layout {

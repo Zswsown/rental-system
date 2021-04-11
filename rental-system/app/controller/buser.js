@@ -8,11 +8,17 @@ class BUserController extends Controller {
   //   ctx.body = user
   // }
   // async login () {
-  //   const { ctx } = this
-  //   const { code, password, role } = ctx.request.body
-  //   const user = await ctx.service.buser.login({ code, password, role })
-  //   ctx.body = user
+  // const { ctx } = this
+  // const { code, password, role } = ctx.request.body
+  // const user = await ctx.service.buser.login({ code, password, role })
+  // ctx.body = user
   // }
+  async updateGUser () {
+    const { ctx } = this
+    const { nickname, tel, email, sex } = ctx.request.body
+    const user = await ctx.service.buser.updateGUser({ nickname, tel, email, sex })
+    ctx.body = user
+  }
 }
 module.exports = BUserController
 

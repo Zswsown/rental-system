@@ -66,6 +66,7 @@ async function insertGUser ({ code, password, role, tel }) {
   }
 }
 
+// 获取登录用户信息
 async function selectGUserById (id) {
   try {
     const sql = 'SELECT * FROM guser WHERE `id` = ?'
@@ -93,8 +94,36 @@ async function selectGUserById (id) {
   }
 }
 
+async function updateGUser ({ id, nickname, tel, email, sex }) {
+  try {
+    const sql = "UPDATE guser SET nickname =?, tel = ? ,email =?, sex =? WHERE id=?";
+    const [rows, fields] = await pool.query(sql, [nickname, tel, email, sex, id])
+    if (rows.affectedRows > 0) {
+      return {
+        msg: '更新用户信息成功',
+        data: rows,
+        code: 200
+      }
+    } else {
+      return {
+        msg: '更新用户信息失败',
+        data: null,
+        code: 5003
+      }
+    }
+  }
+  catch (err) {
+    return {
+      msg: '服务器报错了',
+      data: err,
+      code: 5004
+    }
+  }
+}
+
 module.exports = {
   selectGUser,
   insertGUser,
-  selectGUserById
+  selectGUserById,
+  updateGUser
 }

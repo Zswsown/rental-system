@@ -12,11 +12,14 @@
         <a-col :span="1"><span style="font-weight: 700">方式</span></a-col>
         <a-col :span="23">
           <span>
-            <a-checkbox-group
-              v-model="types"
-              name="typeList"
-              :options="typeList"
-            />
+            <a-radio-group v-model="types">
+              <a-radio
+                v-for="item in typeList"
+                :value="item.value"
+                :key="item.value"
+                >{{ item.label }}</a-radio
+              >
+            </a-radio-group>
           </span>
         </a-col>
       </a-row>
@@ -65,7 +68,7 @@
     <!-- 符合条件的房源总数 -->
     <a-row>
       <p style="font-weight: 700; font-size: 16px">
-        已经为你找到{{ filterSum }}套租房
+        已经为你找到{{ sum }}套租房
       </p>
     </a-row>
     <!-- 按什么规则排序 -->
@@ -76,28 +79,34 @@
         <a-tab-pane key="area" tab="面积"></a-tab-pane>
       </a-tabs>
     </a-row>
-    <!-- 符合筛选条件的房源 -->
-    <a-row>
-      <house-info :rental-house-list="rentalHouseList"></house-info>
-    </a-row>
   </div>
 </template>
 
 <script>
-import req from "@/api/req.js"
 import root from "@/config/root.js"
-import message from "ant-design-vue/lib/message"
 import HouseInfo from '@/components/common/HouseInfo.vue'
 export default {
   name: "SelectHouse",
   components: {
     HouseInfo
   },
+  props: {
+    // 挑选到的房源数量
+    sum: {
+      type: Number,
+      default: 0,
+    },
+    // 出租方式
+    type: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
       filterSum: 22,
       // 选择的 出租方式
-      types: [],
+      types: this.type,
       // 选择的 出租价格
       prices: [],
       // 选择的 房间朝向
@@ -112,26 +121,7 @@ export default {
     changeTab (v) {
 
     },
-    // 获取全部出租房源信息
-    getAllRentalHouse () {
-      let self = this
-      req({
-        method: 'get',
-        url: '/api/house/getAllRentalHouse'
-      }).then(res => {
-        console.log("获取到的出租房屋：", res)
-        let list = res.data.data.map(house => {
-          house.directName = self.directList.filter(direct => house.direct === direct.value)[0].label
-          house.typeName = self.typeList.filter(type => house.type === type.value)[0].label
-          house.tag = house.tag.split(',')
-          return house
-        })
-        self.rentalHouseList = list
-        console.log("获取到的出租房屋：", self.rentalHouseList)
-      }).catch(err => {
-        console.log(err)
-      })
-    }
+
   },
   computed: {
     // 获取出租方式 选项列表
@@ -151,9 +141,6 @@ export default {
       return root.numList
     }
   },
-  mounted () {
-    this.getAllRentalHouse()
-  }
 }
 </script>
 
