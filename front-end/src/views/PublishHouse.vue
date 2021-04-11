@@ -160,7 +160,7 @@
         </a-form-model>
       </a-col>
     </a-row>
-    <a-row type="flex" justify="center" style="margin-top: 8px">
+    <a-row type="flex" justify="center" style="margin: 8px 0">
       <a-col>
         <a-button
           key="提交发布"
@@ -178,6 +178,7 @@
 <script>
 import req from '@/api/req.js'
 import request from '@/api/request.js'
+import root from '@/config/root.js'
 import message from "ant-design-vue/lib/message"
 export default {
   name: "PublishHouse",
@@ -185,19 +186,6 @@ export default {
     return {
       // 出租房间数量
       num: 1,
-      // 出租方式 选项列表
-      typeList: [
-        // { label: '不限', value: 'all' },
-        { label: '整租', value: 'entire' },
-        { label: '分租', value: 'share' }
-      ],
-      // 房间朝向 选项列表
-      directList: [
-        { label: '东', value: 'east' },
-        { label: '西', value: 'west' },
-        { label: '南', value: 'south' },
-        { label: '北', value: 'north' }
-      ],
       // 省份列表
       provinceList: [],
       // 省份选项列表
@@ -589,7 +577,7 @@ export default {
     },
     // 页面构建时初始化
     mounted_init () {
-      this.clean
+      this.clean()
       this.getPrivinceList()
     }
   },
@@ -597,6 +585,16 @@ export default {
     // 获取用户身份信息
     userInfo () {
       return this.$store.state.userInfo
+    },
+
+    // 获取出租方式 选项列表
+    typeList () {
+      return root.typeList
+    },
+
+    // 获取房间朝向 选项列表
+    directList () {
+      return root.directList
     },
 
     // 获取房源出租方式 ->默认整租
@@ -632,7 +630,6 @@ export default {
   background: #fff;
   padding: 8px;
   width: 100%;
-  height: 100%;
 }
 .publishHouseForm {
   width: 600px;

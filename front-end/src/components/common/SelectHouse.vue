@@ -14,8 +14,8 @@
           <span>
             <a-checkbox-group
               v-model="types"
-              name="typeOptions"
-              :options="typeOptions"
+              name="typeList"
+              :options="typeList"
             />
           </span>
         </a-col>
@@ -27,8 +27,8 @@
           <span>
             <a-checkbox-group
               v-model="prices"
-              name="priceOptions"
-              :options="priceOptions"
+              name="priceList"
+              :options="priceList"
             />
           </span>
         </a-col>
@@ -40,8 +40,8 @@
           <span>
             <a-checkbox-group
               v-model="nums"
-              name="numsOptions"
-              :options="numsOptions"
+              name="numList"
+              :options="numList"
             />
           </span>
         </a-col>
@@ -53,8 +53,8 @@
           <span>
             <a-checkbox-group
               v-model="directions"
-              name="directionOptions"
-              :options="directionOptions"
+              name="directList"
+              :options="directList"
             />
           </span>
         </a-col>
@@ -85,6 +85,7 @@
 
 <script>
 import req from "@/api/req.js"
+import root from "@/config/root.js"
 import message from "ant-design-vue/lib/message"
 import HouseInfo from '@/components/common/HouseInfo.vue'
 export default {
@@ -95,77 +96,16 @@ export default {
   data () {
     return {
       filterSum: 22,
-      // 出租方式 选项列表
-      typeOptions: [
-        // { label: '不限', value: 'all' },
-        { label: '整租', value: 'entire' },
-        { label: '合租', value: 'share' },
-      ],
       // 选择的 出租方式
       types: [],
-      // 出租价格 选项列表
-      priceOptions: [
-        { label: '≤1500', value: '0-1500' },
-        { label: '1500-2000', value: '1500-2000' },
-        { label: '2000-3000', value: '2000-3000' },
-        { label: '3000-5000', value: '3000-5000' },
-        { label: '5000-8000', value: '5000-8000' },
-        { label: '≥8000', value: '8000-?' },
-      ],
       // 选择的 出租价格
       prices: [],
-      // 房间朝向 选项列表
-      directionOptions: [
-        { label: '东', value: 'east' },
-        { label: '西', value: 'west' },
-        { label: '南', value: 'south' },
-        { label: '北', value: 'north' },
-      ],
       // 选择的 房间朝向
       directions: [],
-      // 房间数量 选项列表
-      numsOptions: [
-        { label: '一居', value: '1' },
-        { label: '两居', value: '2' },
-        { label: '三居', value: '3' },
-        { label: '四居+', value: '4' },
-      ],
       // 选择的 房间数量
       nums: [],
       // 出租房屋 数据源
       rentalHouseList: [],
-      filterHouseList: [
-        {
-          header: "整租·汉溪长隆 2室1厅 南",
-          detail: "广州-番禺-汉溪长隆 / 64㎡ / 南 / 2室一厅",
-          price: "5000"
-        },
-        {
-          header: "整租·南村万博 1室1厅 南",
-          detail: "广州-番禺-南村万博 / 22㎡ / 南 / 1室一厅",
-          price: "2000"
-        },
-        {
-          header: "整租·汉溪长隆 1室1厅 南",
-          detail: "广州-番禺-汉溪长隆 / 24㎡ / 南 / 2室一厅",
-          price: "2000"
-        },
-        {
-          header: "整租·钟村 2室1厅 南",
-          detail: "广州-番禺-钟村 / 64㎡ / 南 / 2室一厅",
-          price: "4500"
-        },
-        {
-          header: "整租·大石 2室1厅 南",
-          detail: "广州-番禺-大石 / 64㎡ / 南 / 2室一厅",
-          price: "4500"
-        },
-        {
-          header: "整租·大石 2室1厅 南",
-          detail: "广州-番禺-大石 / 64㎡ / 南 / 2室一厅",
-          price: "4500"
-        },
-      ]
     }
   },
   methods: {
@@ -181,8 +121,8 @@ export default {
       }).then(res => {
         console.log("获取到的出租房屋：", res)
         let list = res.data.data.map(house => {
-          house.directName = self.directionOptions.filter(direct => house.direct === direct.value)[0].label
-          house.typeName = self.typeOptions.filter(type => house.type === type.value)[0].label
+          house.directName = self.directList.filter(direct => house.direct === direct.value)[0].label
+          house.typeName = self.typeList.filter(type => house.type === type.value)[0].label
           house.tag = house.tag.split(',')
           return house
         })
@@ -191,6 +131,24 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    }
+  },
+  computed: {
+    // 获取出租方式 选项列表
+    typeList () {
+      return root.typeList
+    },
+    // 获取出租价格 选项列表
+    priceList () {
+      return root.priceList
+    },
+    // 获取房间朝向 选项列表
+    directList () {
+      return root.directList
+    },
+    // 获取房间数量 选项列表
+    numList () {
+      return root.numList
     }
   },
   mounted () {

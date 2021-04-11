@@ -117,7 +117,7 @@ export default {
     // 路由跳转
     changeRouter (item) {
       console.log("跳转的路由为：", item.path)
-      this.$router.push(item.path)
+      this.$router.push({ path: item.path })
     },
     // 用户点击浏览器刷新按钮时，重新请求用户信息，若token未过期，则将请求的数据放入vuex中
     getUserInfo () {
@@ -195,10 +195,22 @@ export default {
 }
 .app-content {
   width: 100%;
-  height: 100%;
   padding: 20px 200px;
+  flex: none;
 }
-
+.clearfix {
+  *zoom: 1;
+}
+.clearfix::before,
+.clearfix::after {
+  content: "";
+  display: block;
+  height: 0;
+  line-height: 0;
+  font-size: 0;
+  visibility: hidden;
+  clear: both;
+}
 /* 设置滚动条的样式 */
 /* 局部不显示滚动条 */
 ::-webkit-scrollbar {

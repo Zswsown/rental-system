@@ -36,5 +36,15 @@ class HouseService extends Service {
     const shouse = await house.selectRentalHouse({ id, type });
     return shouse
   }
+  // 获取整租 出租房源信息
+  async selectAllEntireHouse () {
+    const data = await house.selectAllEntireHouse();
+    return data
+  }
+  // 获取整租 出租房源信息
+  async selectAllShareHouse () {
+    const data = await house.selectAllShareHouse();
+    return data
+  }
 }
 module.exports = HouseService

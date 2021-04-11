@@ -120,11 +120,65 @@ async function selectAllRentalHouse () {
 async function selectRentalHouse ({ id, type }) {
   try {
     let table = type === 'entire' ? 'rent_entire_house' : 'rent_share_house'
-    let sql = `SELECT * FROM ${table} where id = ${id}`
+    let sql = 'SELECT * FROM ( SELECT * FROM ( SELECT  type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address, area, price, direct, tag, `desc`, e.id, e.buser_id, house_id  FROM ' + table + ' as e LEFT JOIN rent_house as r ON r.id = e.house_id) as new WHERE new.id = ' + id + ') AS a LEFT JOIN buser ON buser.id = a.buser_id';
+    // let sql = 'SELECT * FROM  (SELECT  type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address, area, price, direct, tag, `desc`, e.id, e.buser_id, house_id  FROM ' + table + ' as e LEFT JOIN rent_house as r ON r.id = e.house_id) as new WHERE new.id = ' + id;
+    // let sql = `SELECT * FROM ${table} where id = ${id}`
     const [rows, fields] = await pool.query(sql)
     if (rows.length > 0) {
       return {
         msg: '获取出租房源信息成功',
+        code: 500,
+        data: rows
+      }
+    } else {
+      return {
+        msg: '服务器繁忙',
+        data: null,
+        code: 5005
+      }
+    }
+  } catch (error) {
+    return {
+      msg: '服务器报错了',
+      data: null,
+      code: 5004
+    }
+  }
+}
+// 获取全部整租出租房源
+async function selectAllEntireHouse () {
+  try {
+    let sql = 'SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address,area, price, direct, tag, `desc`,e.id,e.buser_id,house_id FROM rent_house as r RIGHT JOIN rent_entire_house as e ON r.id = e.house_id';
+    const [rows, fields] = await pool.query(sql)
+    if (rows.length > 0) {
+      return {
+        msg: '获取全部整租出租房源信息成功',
+        code: 500,
+        data: rows
+      }
+    } else {
+      return {
+        msg: '服务器繁忙',
+        data: null,
+        code: 5005
+      }
+    }
+  } catch (error) {
+    return {
+      msg: '服务器报错了',
+      data: null,
+      code: 5004
+    }
+  }
+}
+// 获取全部分租出租房源
+async function selectAllShareHouse () {
+  try {
+    let sql = 'SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address,area, price, direct, tag, `desc`,s.id,s.buser_id,house_id FROM rent_house as r RIGHT JOIN rent_share_house as s ON r.id = s.house_id';
+    const [rows, fields] = await pool.query(sql)
+    if (rows.length > 0) {
+      return {
+        msg: '获取全部分租出租房源信息成功',
         code: 500,
         data: rows
       }
@@ -149,6 +203,8 @@ module.exports = {
   insertEntireHouse,
   insertShareHouse,
   selectAllRentalHouse,
+  selectAllEntireHouse,
+  selectAllShareHouse,
   selectRentalHouse
   // insertRentalHouse
 }
