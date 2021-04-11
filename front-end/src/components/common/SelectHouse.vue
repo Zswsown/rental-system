@@ -26,9 +26,9 @@
         <a-col :span="23">
           <span>
             <a-checkbox-group
-              v-model="rents"
-              name="rentOptions"
-              :options="rentOptions"
+              v-model="prices"
+              name="priceOptions"
+              :options="priceOptions"
             />
           </span>
         </a-col>
@@ -39,9 +39,9 @@
         <a-col :span="23">
           <span>
             <a-checkbox-group
-              v-model="sizes"
-              name="sizeOptions"
-              :options="sizeOptions"
+              v-model="nums"
+              name="numsOptions"
+              :options="numsOptions"
             />
           </span>
         </a-col>
@@ -78,11 +78,7 @@
     </a-row>
     <!-- 符合筛选条件的房源 -->
     <a-row>
-      <house-info
-        v-for="item in filterHouseList"
-        :key="item.header"
-        :item="item"
-      ></house-info>
+      <house-info :rental-house-list="rentalHouseList"></house-info>
     </a-row>
   </div>
 </template>
@@ -99,13 +95,16 @@ export default {
   data () {
     return {
       filterSum: 22,
+      // 出租方式 选项列表
       typeOptions: [
         // { label: '不限', value: 'all' },
         { label: '整租', value: 'entire' },
         { label: '合租', value: 'share' },
       ],
+      // 选择的 出租方式
       types: [],
-      rentOptions: [
+      // 出租价格 选项列表
+      priceOptions: [
         { label: '≤1500', value: '0-1500' },
         { label: '1500-2000', value: '1500-2000' },
         { label: '2000-3000', value: '2000-3000' },
@@ -113,21 +112,28 @@ export default {
         { label: '5000-8000', value: '5000-8000' },
         { label: '≥8000', value: '8000-?' },
       ],
-      rents: [],
+      // 选择的 出租价格
+      prices: [],
+      // 房间朝向 选项列表
       directionOptions: [
         { label: '东', value: 'east' },
         { label: '西', value: 'west' },
         { label: '南', value: 'south' },
         { label: '北', value: 'north' },
       ],
+      // 选择的 房间朝向
       directions: [],
-      sizeOptions: [
+      // 房间数量 选项列表
+      numsOptions: [
         { label: '一居', value: '1' },
         { label: '两居', value: '2' },
         { label: '三居', value: '3' },
         { label: '四居+', value: '4' },
       ],
-      sizes: [],
+      // 选择的 房间数量
+      nums: [],
+      // 出租房屋 数据源
+      rentalHouseList: [],
       filterHouseList: [
         {
           header: "整租·汉溪长隆 2室1厅 南",
@@ -168,11 +174,20 @@ export default {
     },
     // 获取全部出租房源信息
     getAllRentalHouse () {
+      let self = this
       req({
         methods: 'get',
         url: '/api/house/getAllRentalHouse'
       }).then(res => {
-        console.log(res)
+        console.log("获取到的出租房屋：", res)
+        let list = res.data.data.map(house => {
+          house.directName = self.directionOptions.filter(direct => house.direct === direct.value)[0].label
+          house.typeName = self.typeOptions.filter(type => house.type === type.value)[0].label
+          house.tag = house.tag.split(',')
+          return house
+        })
+        self.rentalHouseList = list
+        console.log("获取到的出租房屋：", self.rentalHouseList)
       }).catch(err => {
         console.log(err)
       })

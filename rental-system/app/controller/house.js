@@ -23,6 +23,12 @@ class HouseController extends Controller {
     const data = await ctx.service.house.selectAllRentalHouse()
     ctx.body = data
   }
+  async selectHouse () {
+    const { ctx } = this
+    const { id, type } = ctx.request.body
+    const house = await ctx.service.house.selectHouse({ id, type })
+    return house
+  }
 }
 
 module.exports = HouseController

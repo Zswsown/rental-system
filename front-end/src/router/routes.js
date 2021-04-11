@@ -25,7 +25,12 @@ export const routes = [
     name: "ShareRent",
     component: () => import("@/views/ShareRent.vue")
   },
-
+  //查看房源详情
+  {
+    path: "/houseDetail/:type/:id",
+    name: "HouseDetail",
+    component: () => import("@/views/HouseDetail.vue")
+  },
   /*
     租户和房源管家共有的权限
   */
