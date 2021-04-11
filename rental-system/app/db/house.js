@@ -117,9 +117,10 @@ async function selectAllRentalHouse () {
 }
 
 // 获取出租房源信息
-async function selectHouse ({ id, house }) {
+async function selectRentalHouse ({ id, type }) {
   try {
-    let sql = 'SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address,area, price, direct, tag, `desc`,e.id,e.buser_id,house_id FROM rent_house as r RIGHT JOIN rent_entire_house as e ON r.id = e.house_id UNION SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address, area, price, direct, tag, `desc`, s.id, s.buser_id, house_id FROM rent_house as r RIGHT JOIN rent_share_house as s ON r.id = s.house_id';
+    let table = type === 'entire' ? 'rent_entire_house' : 'rent_share_house'
+    let sql = `SELECT * FROM ${table} where id = ${id}`
     const [rows, fields] = await pool.query(sql)
     if (rows.length > 0) {
       return {
@@ -147,6 +148,7 @@ module.exports = {
   insertHouse,
   insertEntireHouse,
   insertShareHouse,
-  selectAllRentalHouse
+  selectAllRentalHouse,
+  selectRentalHouse
   // insertRentalHouse
 }

@@ -32,9 +32,9 @@ class HouseService extends Service {
     return data
   }
   // 获取出租房源 信息
-  async selectHouse ({ id, type }) {
-    const house = await house.selectHouse({ id, type });
-    return house
+  async selectRentalHouse ({ id, type }) {
+    const shouse = await house.selectRentalHouse({ id, type });
+    return shouse
   }
 }
 module.exports = HouseService

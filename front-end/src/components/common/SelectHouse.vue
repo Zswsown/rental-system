@@ -176,7 +176,7 @@ export default {
     getAllRentalHouse () {
       let self = this
       req({
-        methods: 'get',
+        method: 'get',
         url: '/api/house/getAllRentalHouse'
       }).then(res => {
         console.log("获取到的出租房屋：", res)

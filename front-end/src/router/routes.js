@@ -6,7 +6,7 @@ export const routes = [
   // 首页
   {
     path: "/",
-    redirect: "home"
+    redirect: "/home"
   },
   {
     path: "/home",

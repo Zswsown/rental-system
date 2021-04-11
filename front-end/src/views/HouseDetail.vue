@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import req from "@/api/req"
+import req from '@/api/req.js'
 export default {
   name: "HouseDetails",
   data () {
@@ -20,9 +20,10 @@ export default {
         type
       } = this.$route.params
       let data = { id, type }
+      console.log("房源详情路由参数", data)
       req({
-        method: 'get',
-        url: "/api/house/getHouseDetail",
+        method: "POST",
+        url: "/api/house/getRentalHouse",
         data: data
       }).then(res => {
         console.log(res)
