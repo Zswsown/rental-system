@@ -25,7 +25,11 @@
         class="houseStateTable"
         :bordered="true"
         :pagination="false"
-        row-key="id"
+        :row-key="
+          (record) => {
+            return record.type + record.id;
+          }
+        "
         :data-source="rentalHouseList"
         style="width: 100%"
         :columns="rentalHouseTableColumn"
@@ -36,7 +40,9 @@
         </span>
         <!-- 房屋区域 -->
         <span slot="address" slot-scope="text">
-          <a style="vertical-align: middle; margin-left: 4px">{{ text }}</a>
+          <span style="vertical-align: middle; margin-left: 4px">
+            {{ text }}
+          </span>
         </span>
         <!-- 创建时间 -->
         <span slot="created_time" slot-scope="text">{{
@@ -49,7 +55,7 @@
           slot="status"
           slot-scope="text, $item"
         >
-          <template v-slot:content="">
+          <template v-slot:content>
             <div
               style="
                 width: 240px;
@@ -90,7 +96,7 @@
                 @click="
                   () => {
                     $item.statusEditVisible = false;
-                    changeStatus($item, index);
+                    changeRentalHouseStatus($item, item);
                   }
                 "
               >
@@ -125,8 +131,8 @@
         </a-popover>
       </a-table>
     </a-row>
-    <a-row style="margin-top: 20px">
-      <!-- <a-pagination
+    <!-- <a-row style="margin-top: 20px">
+      <a-pagination
         :total="queryWorkOrderListPageInfo.total"
         :current="queryWorkOrderListPageInfo.current"
         :page-size="queryWorkOrderListPageInfo.size"
@@ -148,9 +154,9 @@
             getWorkOrderList();
           }
         "
-      ></a-pagination> -->
+      ></a-pagination>
       <a-pagination :total="20"> </a-pagination>
-    </a-row>
+    </a-row> -->
   </div>
 </template>
 
@@ -158,12 +164,14 @@
 import moment from "moment"
 import root from "@/config/root.js"
 import req from "@/api/req.js"
+import message from "ant-design-vue/lib/message"
 export default {
   name: "HouseState",
   data () {
     return {
       // 房屋出租方式
       type: null,
+      // 出租房屋状态表格列
       rentalHouseTableColumn: [{
         "title": "房间编号",
         "dataIndex": "id",
@@ -173,8 +181,19 @@ export default {
         "scopedSlots": {
           "customRender": "id"
         }
-      }, {
-        "title": "房屋区域",
+      },
+      {
+        "title": "创建时间",
+        "dataIndex": "created_time",
+        "key": "created_time",
+        "width": 150,
+        "align": "center",
+        "scopedSlots": {
+          "customRender": "created_time"
+        }
+      },
+      {
+        "title": "房屋地址",
         "dataIndex": "address",
         "key": "address",
         "width": 150,
@@ -203,16 +222,6 @@ export default {
           "customRender": "status"
         }
       },
-      {
-        "title": "创建时间",
-        "dataIndex": "created_time",
-        "key": "created_time",
-        "width": 150,
-        "align": "center",
-        "scopedSlots": {
-          "customRender": "created_time"
-        }
-      },
       ],
       // 出租房屋列表
       rentalHouseList: []
@@ -237,8 +246,31 @@ export default {
     }
   },
   methods: {
-    changeStatus (text, item) {
-
+    // 更新出租房屋状态信息
+    changeRentalHouseStatus ($item, item) {
+      console.log($item, item.key)
+      let url = $item.type === 'entire' ? '/api/house/updateEntireHouseById' : '/api/house/updateShareHouseById'
+      let data = {
+        id: $item.id,
+        status: item.key
+      }
+      req({
+        method: 'post',
+        url: url,
+        data: data
+      }).then(res => {
+        if (res.data.code === 200) {
+          message.success(res.data.msg)
+          console.log(res.data.data)
+          this.getRentalHouseList(this.type)
+        }
+        else {
+          message.error(res.data.msg)
+        }
+      }).catch(err => {
+        console.log(err)
+        message.error(err)
+      })
     },
     // 获取全部出租房源信息
     getRentalHouseList (type) {
@@ -251,7 +283,10 @@ export default {
         data: { id }
       }).then(res => {
         console.log("获取到的出租房屋：", res)
-        self.rentalHouseList = res.data.data
+        self.rentalHouseList = res.data.data.map(item => {
+          item.statusEditVisible = false
+          return item
+        })
       }).catch(err => {
         console.log(err)
         message.error(err)

@@ -17,27 +17,36 @@
           :rules="rules"
           v-bind="layout"
         >
-          <a-form-model-item has-feedback label="房屋编号" prop="city">
-            <a-input
-              v-model="reportForm.code"
+          <a-form-model-item has-feedback label="出租方式" prop="type">
+            <a-select v-model="reportForm.type" style="width: 120px">
+              <a-select-option v-for="item in typeList" :key="item.value">
+                {{ item.label }}
+              </a-select-option>
+            </a-select>
+          </a-form-model-item>
+          <a-form-model-item has-feedback label="房屋编号" prop="house_id">
+            <a-input-number
+              v-model="reportForm.house_id"
               autocomplete="off"
               placeholder="请输入房屋编号"
             />
           </a-form-model-item>
-          <a-form-model-item has-feedback label="房源管家" prop="pass">
-            <a-input
-              v-model="reportForm.pass"
-              type="password"
+          <a-form-model-item has-feedback label="房源管家ID" prop="buser_id">
+            <a-input-number
+              v-model="reportForm.buser_id"
               autocomplete="off"
-              placeholder="请输入房源管家名字"
+              placeholder="请输入房源管家ID"
             />
           </a-form-model-item>
-          <a-form-model-item has-feedback label="举报理由" prop="checkPass">
+          <a-form-model-item
+            has-feedback
+            label="举报理由"
+            prop="illegal_resson"
+          >
             <a-textarea
-              v-model="reportForm.checkPass"
-              type="password"
+              v-model="reportForm.illegal_resson"
               autocomplete="off"
-              placeholder="请输入举报的理由"
+              placeholder="请输入举报理由"
             />
           </a-form-model-item>
         </a-form-model>
@@ -59,36 +68,49 @@
 </template>
 
 <script>
+import root from "@/config/root.js"
+import req from "@/api/req.js"
 export default {
   name: "ReportFakeHouse",
   data () {
     return {
-      type: true,
+      // 提交按钮 加载状态
       loading: false,
+      // 表单布局
       layout: {
         labelCol: { span: 5 },
         wrapperCol: { span: 14 },
       },
+      // 提交的举报虚假房源表单
       reportForm: {
-        type: "tenant",
-        code: "",
-        pass: "",
-        checkPass: "",
-        tel: ""
+        type: "entire",
+        house_id: 0,
+        buser_id: 0,
+        illegal_reason: ""
       },
       rules: {
-        code: [{ required: true, message: "请输入账号", trigger: 'change' }, { required: true, trigger: 'blur' }],
-        pass: [{ required: true, message: "请输入密码", trigger: 'change' }, { required: true, trigger: 'blur' }],
-        checkPass: [{ validator: this.validatePass, trigger: 'change' }],
-        tel: [{ validator: this.validateTel, trigger: 'change' }],
+        type: [{ required: true, message: "请输入账号", trigger: 'change' }, { required: true, trigger: 'blur' }],
+        house_id: [{ required: true, message: "请输入房屋编号", trigger: 'change' }, { required: true, trigger: 'blur' }],
+        buser_id: [{ required: true, message: "请输入房源管家ID", trigger: 'change' }, { required: true, trigger: 'blur' }],
+        illegal_reason: [{ required: true, message: "请输入举报理由", trigger: 'change' }, { required: true, trigger: 'blur' }],
       },
     }
+  },
+  computed: {
+    // 出租方式 选项列表
+    typeList () {
+      return root.typeList
+    },
   },
   methods: {
     report () {
       this.loading = true
       this.$refs.reportForm.validate(valid => {
         if (valid) {
+          req({
+            method: "post",
+            url: ""
+          })
           this.loading = false
           message.success("注册成功");
           this.visible = false

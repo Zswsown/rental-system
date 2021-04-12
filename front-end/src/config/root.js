@@ -44,17 +44,20 @@ export default {
   },
   ],
   // 房源状态
-  statusKeyValue: {
+  statusList: {
     disRented: {
       color: '#1890ff',
+      key: 'disRented',
       label: '未出租',
     },
     rented: {
       color: '#0F62FE',
+      key: 'rented',
       label: '出租中',
     },
     offline: {
       color: '#52C41A',
+      key: 'offline',
       label: '已下架',
     },
   },

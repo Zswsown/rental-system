@@ -62,5 +62,15 @@ class HouseService extends Service {
     const data = await house.selectAllShareHouseByBuserId({ id })
     return data
   }
+  // 根据房屋id更新整租房源信息
+  async updateEntireHouseById (data) {
+    const ndata = await house.updateEntireHouseById(data)
+    return ndata
+  }
+  // 根据房屋id更新分租房源信息
+  async updateShareHouseById (data) {
+    const ndata = await house.updateShareHouseById(data)
+    return ndata
+  }
 }
 module.exports = HouseService

@@ -281,6 +281,72 @@ async function selectAllShareHouseByBuserId ({ id }) {
   }
 }
 
+// 根据出租房id更新整租房屋状态
+async function updateEntireHouseById (data) {
+  try {
+    let { id } = data
+    let columnKeys = (Object.keys(data)).filter(item => item !== 'id')
+    let params = ''
+    for (let i = 0; i < columnKeys.length; i++) {
+      params = columnKeys[i] + " = '" + data[columnKeys[i]] + "',"
+    }
+    let sql = 'UPDATE rent_entire_house SET ' + params.slice(0, -1) + ' WHERE id = ' + id;
+    const [rows, fields] = await pool.query(sql)
+    if (rows.affectedRows > 0) {
+      return {
+        msg: '更新整租房屋信息成功',
+        data: rows,
+        code: 200
+      }
+    } else {
+      return {
+        msg: '更新整租房屋信息失败',
+        data: null,
+        code: 5003
+      }
+    }
+  } catch (error) {
+    return {
+      msg: '服务器报错了',
+      data: null,
+      code: 5004
+    }
+  }
+}
+
+// 根据出租房id更新整租房屋状态
+async function updateShareHouseById (data) {
+  try {
+    let { id } = data
+    let columnKeys = (Object.keys(data)).filter(item => item !== 'id')
+    let params = ''
+    for (let i = 0; i < columnKeys.length; i++) {
+      params = columnKeys[i] + " = '" + data[columnKeys[i]] + "',"
+    }
+    let sql = 'UPDATE rent_share_house SET ' + params.slice(0, -1) + ' WHERE id = ' + id;
+    const [rows, fields] = await pool.query(sql)
+    if (rows.affectedRows > 0) {
+      return {
+        msg: '更新分租房屋信息成功',
+        data: rows,
+        code: 200
+      }
+    } else {
+      return {
+        msg: '更新分租房屋信息失败',
+        data: null,
+        code: 5003
+      }
+    }
+  } catch (error) {
+    return {
+      msg: '服务器报错了',
+      data: null,
+      code: 5004
+    }
+  }
+}
+
 module.exports = {
   insertHouse,
   insertEntireHouse,
@@ -291,5 +357,7 @@ module.exports = {
   selectRentalHouse,
   selectAllRentalHouseByBuserId,
   selectAllEntireHouseByBuserId,
-  selectAllShareHouseByBuserId
+  selectAllShareHouseByBuserId,
+  updateEntireHouseById,
+  updateShareHouseById
 }

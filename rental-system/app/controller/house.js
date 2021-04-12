@@ -57,6 +57,18 @@ class HouseController extends Controller {
     const data = await ctx.service.house.selectAllShareHouseByBuserId({ id })
     ctx.body = data
   }
+  async updateEntireHouseById () {
+    const { ctx } = this
+    const data = ctx.request.body
+    const ndata = await ctx.service.house.updateEntireHouseById(data)
+    ctx.body = ndata
+  }
+  async updateShareHouseById () {
+    const { ctx } = this
+    const data = ctx.request.body
+    const ndata = await ctx.service.house.updateShareHouseById(data)
+    ctx.body = ndata
+  }
 }
 
 module.exports = HouseController

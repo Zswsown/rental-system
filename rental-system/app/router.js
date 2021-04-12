@@ -19,6 +19,8 @@ module.exports = app => {
   router.post('/api/house/getAllRentalHouseByBuserId', controller.house.selectAllRentalHouseByBuserId)
   router.post('/api/house/getAllEntireHouseByBuserId', controller.house.selectAllEntireHouseByBuserId)
   router.post('/api/house/getAllShareHouseByBuserId', controller.house.selectAllShareHouseByBuserId)
+  router.post('/api/house/updateEntireHouseById', controller.house.updateEntireHouseById)
+  router.post('/api/house/updateShareHouseById', controller.house.updateShareHouseById)
 
   router.post('/api/house/publishHouse', middleware.jwt(), controller.house.insertHouse)
   router.post('/api/house/publishEntireHouse', middleware.jwt(), controller.house.insertEntireHouse)
