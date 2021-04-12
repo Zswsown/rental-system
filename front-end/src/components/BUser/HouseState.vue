@@ -36,7 +36,9 @@
       >
         <!-- 房间编号 -->
         <span slot="id" slot-scope="text">
-          <a style="vertical-align: middle; margin-left: 4px">{{ text }}</a>
+          <span style="vertical-align: middle; margin-left: 4px">{{
+            text
+          }}</span>
         </span>
         <!-- 房屋区域 -->
         <span slot="address" slot-scope="text">

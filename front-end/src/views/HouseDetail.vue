@@ -95,12 +95,12 @@
           </a-col>
           <a-col>
             <a-button
-              icon="home"
+              icon="heart"
               size="large"
               type="primary"
               ghost
               @click="orderSeeRentalHouse"
-              >预约看房</a-button
+              >点击收藏</a-button
             >
           </a-col>
         </a-row>

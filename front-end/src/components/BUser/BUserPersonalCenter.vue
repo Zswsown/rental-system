@@ -2,7 +2,7 @@
   <div>
     <a-popover>
       <template slot="content">
-        <a-menu>
+        <a-menu :selected-keys="activeKey">
           <a-menu-item @click="editPersonalInfo">修改个人信息</a-menu-item>
           <a-menu-item @click="editHouseState">房源状态管理</a-menu-item>
           <a-menu-item @click="editHouseInfo">更新房源</a-menu-item>
@@ -22,8 +22,13 @@ import message from "ant-design-vue/lib/message"
 export default {
   name: "BUserPersonalCenter",
   computed: {
+    // 用户信息
     userInfo () {
       return this.$store.state.userInfo
+    },
+    // 获取激活的菜单项 -->根据路由判断
+    activeKey () {
+      return [this.$route.path]
     }
   },
   methods: {

@@ -11,7 +11,7 @@
             <span>毕业生租房</span>
           </a-col>
           <!-- 导航栏 -->
-          <a-col :offset="5">
+          <a-col :offset="3">
             <a-menu
               :selected-keys="activeKey"
               mode="horizontal"

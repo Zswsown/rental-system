@@ -20,6 +20,10 @@ export default {
     path: '/reportFakeHouse',
     text: '举报虚假房源',
   },
+  {
+    path: '/advice',
+    text: '反馈意见',
+  },
   ],
   // 侧边栏导航菜单
   siderMenu: [{

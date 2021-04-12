@@ -17,28 +17,13 @@
           :rules="rules"
           v-bind="layout"
         >
-          <a-form-model-item has-feedback label="房屋编号" prop="city">
-            <a-input
-              v-model="adviceForm.code"
-              autocomplete="off"
-              placeholder="请输入房屋编号"
-            />
-          </a-form-model-item>
-          <a-form-model-item has-feedback label="房源管家" prop="pass">
-            <a-input
-              v-model="adviceForm.pass"
-              type="password"
-              autocomplete="off"
-              placeholder="请输入房源管家名字"
-            />
-          </a-form-model-item>
-          <a-form-model-item has-feedback label="举报理由" prop="checkPass">
+          <a-form-model-item has-feedback label="反馈意见" prop="advice">
             <a-textarea
-              :rows="3"
-              v-model="adviceForm.checkPass"
-              type="password"
+              v-model="adviceForm.advice"
               autocomplete="off"
-              placeholder="请输入举报的理由"
+              placeholder="请输入反馈意见"
+              :rows="4"
+              style="height: 200px"
             />
           </a-form-model-item>
         </a-form-model>
@@ -47,12 +32,12 @@
     <a-row type="flex" justify="center">
       <a-col>
         <a-button
-          key="提交发布"
+          key="提交"
           type="primary"
           :loading="loading"
-          @click="advice"
+          @click="submitAdvice"
         >
-          提交发布
+          提交
         </a-button>
       </a-col>
     </a-row>
@@ -60,64 +45,69 @@
 </template>
 
 <script>
+import req from "@/api/req.js"
+import message from "ant-design-vue/lib/message"
 export default {
-  name: "adviceFakeHouse",
+  name: "Advice",
   data () {
     return {
-      type: true,
+      // 提交按钮 加载状态
       loading: false,
+      // 表单布局
       layout: {
         labelCol: { span: 5 },
         wrapperCol: { span: 14 },
       },
+      // 提交的反馈意见表单
       adviceForm: {
-        type: "tenant",
-        code: "",
-        pass: "",
-        checkPass: "",
-        tel: ""
+        advice: "",
       },
+      // 举报虚假房源表单校验规则
       rules: {
-        code: [{ required: true, message: "请输入账号", trigger: 'change' }, { required: true, trigger: 'blur' }],
-        pass: [{ required: true, message: "请输入密码", trigger: 'change' }, { required: true, trigger: 'blur' }],
-        checkPass: [{ validator: this.validatePass, trigger: 'change' }],
-        tel: [{ validator: this.validateTel, trigger: 'change' }],
+        advice: [{ required: true, message: "请输入反馈意见", trigger: 'change' }, { required: true, message: "请输入反馈意见", trigger: 'blur' }]
       },
     }
   },
+  computed: {
+    // 用户信息
+    userInfo () {
+      return this.$store.state.userInfo
+    }
+  },
   methods: {
-    advice () {
+    // 新增举报虚假房源信息
+    submitAdvice () {
       this.loading = true
       this.$refs.adviceForm.validate(valid => {
         if (valid) {
-          this.loading = false
-          message.success("注册成功");
-          this.visible = false
+          let data = {
+            role: this.userInfo.role,
+            user_id: this.userInfo.id,
+            advice: this.adviceForm.advice
+          }
+          req({
+            method: "post",
+            url: "/api/advice/insertAdvice",
+            data: data
+          }).then(res => {
+            if (res.data.code === 500) {
+              message.success(res.data.msg);
+            }
+            else {
+              message.error(res.data.msg)
+            }
+            this.loading = false
+          }).catch(err => {
+            message.error(err);
+          })
         } else {
           this.loading = false
-          console.log("注册信息未填写");
-          message.error("注册信息未填写")
+          console.log("未填写正确信息");
+          message.error("未填写正确信息")
           return false;
         }
       })
     },
-    validatePass (rule, value, callback) {
-      if (value === '') {
-        callback(new Error('请再次输入密码'));
-      } else if (value !== this.adviceForm.pass) {
-        callback(new Error("两次密码输入不一致！"));
-      } else {
-        callback();
-      }
-    },
-    validateTel (rule, value, callback) {
-      if (!(/^1[3456789]\d{9}$/.test(value))) {
-        callback(new Error('手机号码格式错误'));
-      }
-      else {
-        callback();
-      }
-    }
   }
 }
 </script>

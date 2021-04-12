@@ -70,6 +70,7 @@
 <script>
 import root from "@/config/root.js"
 import req from "@/api/req.js"
+import message from "ant-design-vue/lib/message"
 export default {
   name: "ReportFakeHouse",
   data () {
@@ -88,6 +89,7 @@ export default {
         buser_id: 0,
         illegal_reason: ""
       },
+      // 举报虚假房源表单校验规则
       rules: {
         type: [{ required: true, message: "请输入账号", trigger: 'change' }, { required: true, trigger: 'blur' }],
         house_id: [{ required: true, message: "请输入房屋编号", trigger: 'change' }, { required: true, trigger: 'blur' }],
@@ -103,42 +105,35 @@ export default {
     },
   },
   methods: {
+    // 新增举报虚假房源信息
     report () {
       this.loading = true
       this.$refs.reportForm.validate(valid => {
         if (valid) {
           req({
             method: "post",
-            url: ""
+            url: "/api/illegal/insertReportFakeHouse",
+            data: this.reportForm
+          }).then(res => {
+            if (res.data.code === 500) {
+              message.success(res.data.msg);
+              thie.$refs.reportForm.resetFields()
+            }
+            else {
+              message.error(res.data.msg)
+            }
+            this.loading = false
+          }).catch(err => {
+            message.error(err);
           })
-          this.loading = false
-          message.success("注册成功");
-          this.visible = false
         } else {
           this.loading = false
-          console.log("注册信息未填写");
-          message.error("注册信息未填写")
+          console.log("未填写正确信息");
+          message.error("未填写正确信息")
           return false;
         }
       })
     },
-    validatePass (rule, value, callback) {
-      if (value === '') {
-        callback(new Error('请再次输入密码'));
-      } else if (value !== this.reportForm.pass) {
-        callback(new Error("两次密码输入不一致！"));
-      } else {
-        callback();
-      }
-    },
-    validateTel (rule, value, callback) {
-      if (!(/^1[3456789]\d{9}$/.test(value))) {
-        callback(new Error('手机号码格式错误'));
-      }
-      else {
-        callback();
-      }
-    }
   }
 }
 </script>

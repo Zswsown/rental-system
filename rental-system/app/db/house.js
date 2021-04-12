@@ -288,9 +288,10 @@ async function updateEntireHouseById (data) {
     let columnKeys = (Object.keys(data)).filter(item => item !== 'id')
     let params = ''
     for (let i = 0; i < columnKeys.length; i++) {
-      params = columnKeys[i] + " = '" + data[columnKeys[i]] + "',"
+      params = "`" + columnKeys[i] + "` = '" + data[columnKeys[i]] + "'," + params
     }
     let sql = 'UPDATE rent_entire_house SET ' + params.slice(0, -1) + ' WHERE id = ' + id;
+    // return { sql, columnKeys }
     const [rows, fields] = await pool.query(sql)
     if (rows.affectedRows > 0) {
       return {
@@ -321,7 +322,7 @@ async function updateShareHouseById (data) {
     let columnKeys = (Object.keys(data)).filter(item => item !== 'id')
     let params = ''
     for (let i = 0; i < columnKeys.length; i++) {
-      params = columnKeys[i] + " = '" + data[columnKeys[i]] + "',"
+      params = "`" + columnKeys[i] + "` = '" + data[columnKeys[i]] + "'," + params
     }
     let sql = 'UPDATE rent_share_house SET ' + params.slice(0, -1) + ' WHERE id = ' + id;
     const [rows, fields] = await pool.query(sql)

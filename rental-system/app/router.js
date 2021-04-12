@@ -25,4 +25,7 @@ module.exports = app => {
   router.post('/api/house/publishHouse', middleware.jwt(), controller.house.insertHouse)
   router.post('/api/house/publishEntireHouse', middleware.jwt(), controller.house.insertEntireHouse)
   router.post('/api/house/publishShareHouse', middleware.jwt(), controller.house.insertShareHouse)
+
+  router.post('/api/illegal/insertReportFakeHouse', controller.illegal.insertReportFakeHouse)
+  router.post('/api/advice/insertAdvice', controller.advice.insertAdvice)
 }
