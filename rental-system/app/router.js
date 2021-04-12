@@ -28,4 +28,6 @@ module.exports = app => {
 
   router.post('/api/illegal/insertReportFakeHouse', controller.illegal.insertReportFakeHouse)
   router.post('/api/advice/insertAdvice', controller.advice.insertAdvice)
+  router.post('/api/collection/insertCollection', controller.collection.insertCollection)
+
 }

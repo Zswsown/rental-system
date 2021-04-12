@@ -130,6 +130,10 @@ export default {
     // 获取房间朝向 选项列表
     directList () {
       return root.directList
+    },
+    // 用户信息
+    userInfo () {
+      return this.$store.state.userInfo
     }
   },
   methods: {
@@ -179,7 +183,28 @@ export default {
     },
     // 预约看房
     orderSeeRentalHouse () {
-      message.success("预约看房成功！")
+      let { id: house_id, type } = this.$route.params
+      let { role, id: user_id } = this.userInfo
+      let data = {
+        house_id,
+        type,
+        role,
+        user_id
+      }
+      req({
+        method: "post",
+        url: "/api/collection/insertCollection",
+        data: data
+      }).then(res => {
+        if (res.data.code === 200) {
+          message.success(res.data.msg)
+        }
+        else {
+          message.error(res.data.msg)
+        }
+      }).catch(err => {
+        message.error(err)
+      })
     }
   },
   created () {
