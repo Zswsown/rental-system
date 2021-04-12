@@ -28,22 +28,38 @@ class HouseService extends Service {
   }
   // 获取全部出租房源
   async selectAllRentalHouse () {
-    const data = await house.selectAllRentalHouse();
+    const data = await house.selectAllRentalHouse()
     return data
   }
   // 获取出租房源 信息
   async selectRentalHouse ({ id, type }) {
-    const shouse = await house.selectRentalHouse({ id, type });
+    const shouse = await house.selectRentalHouse({ id, type })
     return shouse
   }
   // 获取整租 出租房源信息
   async selectAllEntireHouse () {
-    const data = await house.selectAllEntireHouse();
+    const data = await house.selectAllEntireHouse()
     return data
   }
   // 获取整租 出租房源信息
   async selectAllShareHouse () {
-    const data = await house.selectAllShareHouse();
+    const data = await house.selectAllShareHouse()
+    return data
+  }
+
+  // 根据房源管家id 获取全部出租房源
+  async selectAllRentalHouseByBuserId ({ id }) {
+    const data = await house.selectAllRentalHouseByBuserId({ id })
+    return data
+  }
+  // 根据房源管家id 获取整租 出租房源信息
+  async selectAllEntireHouseByBuserId ({ id }) {
+    const data = await house.selectAllEntireHouseByBuserId({ id })
+    return data
+  }
+  // 根据房源管家id 获取分租 出租房源信息
+  async selectAllShareHouseByBuserId ({ id }) {
+    const data = await house.selectAllShareHouseByBuserId({ id })
     return data
   }
 }

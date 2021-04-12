@@ -1,7 +1,22 @@
 <template>
   <div class="house-state">
-    <a-row>
-      <h2 style="font-weight: 700">房源状态管理</h2>
+    <a-row type="flex">
+      <a-col style="margin-right: 20px">
+        <h2 style="font-weight: 700">房源状态管理</h2>
+      </a-col>
+      <a-col>
+        <span>出租方式：</span>
+        <a-select
+          v-model="type"
+          style="width: 120px"
+          :allowClear="true"
+          @change="changeFilterOption"
+        >
+          <a-select-option v-for="item in typeList" :key="item.value">
+            {{ item.label }}
+          </a-select-option>
+        </a-select>
+      </a-col>
     </a-row>
     <!-- 分割线 -->
     <a-divider></a-divider>
@@ -11,12 +26,16 @@
         :bordered="true"
         :pagination="false"
         row-key="id"
-        :data-source="houseStateList"
+        :data-source="rentalHouseList"
         style="width: 100%"
-        :columns="houseStateTableColumn"
+        :columns="rentalHouseTableColumn"
       >
-        <!-- id -->
+        <!-- 房间编号 -->
         <span slot="id" slot-scope="text">
+          <a style="vertical-align: middle; margin-left: 4px">{{ text }}</a>
+        </span>
+        <!-- 房屋区域 -->
+        <span slot="address" slot-scope="text">
           <a style="vertical-align: middle; margin-left: 4px">{{ text }}</a>
         </span>
         <!-- 创建时间 -->
@@ -66,8 +85,8 @@
                   border: `1px solid ${item.color}`,
                   borderRadius: '25px',
                 }"
-                v-for="(item, index) of statusKeyValue"
-                :key="'statusKeyValue-' + index"
+                v-for="(item, index) of statusList"
+                :key="'statusList-' + index"
                 @click="
                   () => {
                     $item.statusEditVisible = false;
@@ -82,18 +101,16 @@
           <div
             :style="{
               cursor: 'pointer',
-              color: statusKeyValue[text]
-                ? statusKeyValue[text].color
-                : '#1890ff',
-              borderColor: statusKeyValue[text]
-                ? statusKeyValue[text].color
+              color: statusList[text] ? statusList[text].color : '#1890ff',
+              borderColor: statusList[text]
+                ? statusList[text].color
                 : '#1890ff',
               display: 'inline-block',
               height: '25px',
               lineHeight: '23px',
               padding: '0 10px',
               border: `1px solid ${
-                statusKeyValue[text] ? statusKeyValue[text].color : '#1890ff'
+                statusList[text] ? statusList[text].color : '#1890ff'
               }`,
               borderRadius: '25px',
             }"
@@ -103,7 +120,7 @@
               }
             "
           >
-            {{ statusKeyValue[text] ? statusKeyValue[text].label : "未知" }}
+            {{ statusList[text] ? statusList[text].label : "未知" }}
           </div>
         </a-popover>
       </a-table>
@@ -140,12 +157,15 @@
 <script>
 import moment from "moment"
 import root from "@/config/root.js"
+import req from "@/api/req.js"
 export default {
   name: "HouseState",
   data () {
     return {
-      houseStateTableColumn: [{
-        "title": "房屋编号",
+      // 房屋出租方式
+      type: null,
+      rentalHouseTableColumn: [{
+        "title": "房间编号",
         "dataIndex": "id",
         "key": "id",
         "width": 80,
@@ -155,23 +175,25 @@ export default {
         }
       }, {
         "title": "房屋区域",
-        "dataIndex": "area",
-        "key": "area",
+        "dataIndex": "address",
+        "key": "address",
         "width": 150,
         "align": "center",
         "scopedSlots": {
-          "customRender": "area"
+          "customRender": "address"
         }
-      }, {
-        "title": "创建时间",
-        "dataIndex": "created_time",
-        "key": "created_time",
-        "width": 150,
+      },
+      {
+        "title": "房屋标签",
+        "dataIndex": "tag",
+        "key": "tag",
+        "width": 180,
         "align": "center",
         "scopedSlots": {
-          "customRender": "created_time"
+          "customRender": "tag"
         }
-      }, {
+      },
+      {
         "title": "房屋状态",
         "dataIndex": "status",
         "key": "status",
@@ -180,73 +202,68 @@ export default {
         "scopedSlots": {
           "customRender": "status"
         }
-      }],
-      houseStateList: [
-        {
-          id: "bys344",
-          area: "广州市番禺区汉溪长隆奥园天地时代park E1栋8楼101室",
-          created_time: 1617156519366,
-          status: 'offline',
-          statusEditVisible: null
-        },
-        {
-          id: "bys350",
-          area: "广州市番禺区汉溪长隆奥园天地时代park E1栋8楼109室",
-          created_time: 1617159519366,
-          status: 'rented',
-          statusEditVisible: null
-        },
-        {
-          id: "bys345",
-          area: "广州市番禺区汉溪长隆奥园天地时代park E1栋8楼106室",
-          created_time: 1617157518377,
-          status: 'rented',
-          statusEditVisible: null
-        },
-        {
-          id: "bys346",
-          area: "广州市番禺区汉溪长隆奥园天地时代park E1栋8楼105室",
-          created_time: 1617157516388,
-          status: 'disRented',
-          statusEditVisible: null
-        },
-        {
-          id: "bys347",
-          area: "广州市番禺区汉溪长隆奥园天地时代park E1栋8楼104室",
-          created_time: 1617157549399,
-          status: 'disRented',
-          statusEditVisible: null
-        },
-        {
-          id: "bys348",
-          area: "广州市番禺区汉溪长隆奥园天地时代park E1栋8楼103室",
-          created_time: 1617156519300,
-          status: 'disRented',
-          statusEditVisible: null
-        },
-        {
-          id: "bys349",
-          area: "广州市番禺区汉溪长隆奥园天地时代park E1栋8楼102室",
-          created_time: 1617157519311,
-          status: 'offline',
-          statusEditVisible: null
+      },
+      {
+        "title": "创建时间",
+        "dataIndex": "created_time",
+        "key": "created_time",
+        "width": 150,
+        "align": "center",
+        "scopedSlots": {
+          "customRender": "created_time"
         }
-      ]
+      },
+      ],
+      // 出租房屋列表
+      rentalHouseList: []
     }
   },
   computed: {
-    statusKeyValue () {
-      return root.statusKeyValue
+    // 房屋状态 选项列表
+    statusList () {
+      return root.statusList
+    },
+    // 出租方式 选项列表
+    typeList () {
+      return root.typeList
     },
     // moment
     moment () {
       return moment
     },
+    // 获取用户状态
+    userInfo () {
+      return this.$store.state.userInfo
+    }
   },
   methods: {
     changeStatus (text, item) {
 
     },
+    // 获取全部出租房源信息
+    getRentalHouseList (type) {
+      let self = this
+      let { id } = self.userInfo
+      let url = type == null ? '/api/house/getAllRentalHouseByBuserId' : (type === 'entire' ? '/api/house/getAllEntireHouseByBuserId' : '/api/house/getAllShareHouseByBuserId')
+      req({
+        method: 'post',
+        url: url,
+        data: { id }
+      }).then(res => {
+        console.log("获取到的出租房屋：", res)
+        self.rentalHouseList = res.data.data
+      }).catch(err => {
+        console.log(err)
+        message.error(err)
+      })
+    },
+    // 查询方式改变 出租房出租方式
+    changeFilterOption (type) {
+      this.getRentalHouseList(type)
+    }
+  },
+  mounted () {
+    this.getRentalHouseList(null)
   }
 }
 </script>

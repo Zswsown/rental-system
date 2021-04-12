@@ -39,6 +39,24 @@ class HouseController extends Controller {
     const data = await ctx.service.house.selectAllShareHouse()
     ctx.body = data
   }
+  async selectAllRentalHouseByBuserId () {
+    const { ctx } = this
+    const { id } = ctx.request.body
+    const data = await ctx.service.house.selectAllRentalHouseByBuserId({ id })
+    ctx.body = data
+  }
+  async selectAllEntireHouseByBuserId () {
+    const { ctx } = this
+    const { id } = ctx.request.body
+    const data = await ctx.service.house.selectAllEntireHouseByBuserId({ id })
+    ctx.body = data
+  }
+  async selectAllShareHouseByBuserId () {
+    const { ctx } = this
+    const { id } = ctx.request.body
+    const data = await ctx.service.house.selectAllShareHouseByBuserId({ id })
+    ctx.body = data
+  }
 }
 
 module.exports = HouseController

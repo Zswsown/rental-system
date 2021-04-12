@@ -21,7 +21,7 @@ export default {
     icon: 'notification'
   },
   ],
-  statusKeyValue: {
+  statusList: {
     disRented: {
       color: '#1890ff',
       label: '未出租',

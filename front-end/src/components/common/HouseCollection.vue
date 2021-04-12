@@ -156,8 +156,8 @@ export default {
     }
   },
   computed: {
-    statusKeyValue () {
-      return root.statusKeyValue
+    statusList () {
+      return root.statusList
     },
     // moment
     moment () {

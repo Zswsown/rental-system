@@ -110,9 +110,10 @@ export default {
       this.loading = true
       this.$refs.editForm.validate(valid => {
         if (valid) {
+          let url = this.userInfo.role === 'guser' ? "/api/guser/updateGUser" : "/api/buser/updateBUser"
           req({
             method: "post",
-            url: "/api/guser/updateGUser",
+            url: url,
             data: {
               id: this.$route.params.id,
               ...this.editForm
@@ -120,7 +121,7 @@ export default {
           }).then(res => {
             this.loading = false
             if (res.data.code === 200) {
-              message.success(res.data.msg);
+              message.success(res.data.msg)
               console.log(res.data.data)
               this.getUserInfo()
             }
@@ -129,13 +130,13 @@ export default {
             }
           }).catch(err => {
             this.loading = false
-            message.success("用户信息更新失败", err);
+            message.success("用户信息更新失败", err)
           })
         } else {
           this.loading = false
-          console.log("用户信息未正确填写");
+          console.log("用户信息未正确填写")
           message.error("用户信息未正确填写")
-          return false;
+          return false
         }
       })
     },
