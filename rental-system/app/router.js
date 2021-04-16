@@ -28,6 +28,10 @@ module.exports = app => {
 
   router.post('/api/illegal/insertReportFakeHouse', controller.illegal.insertReportFakeHouse)
   router.post('/api/advice/insertAdvice', controller.advice.insertAdvice)
-  router.post('/api/collection/insertCollection', controller.collection.insertCollection)
 
+  // 收藏房源有关
+  router.post('/api/collection/insertCollection', controller.collection.insertCollection)
+  router.post('/api/collection/deleteCollection', controller.collection.deleteCollection)
+  router.post('/api/collection/getCollectionById', controller.collection.getCollectionById)
+  router.post('/api/collection/getCollectionByUserId', controller.collection.getCollectionByUserId)
 }

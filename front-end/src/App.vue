@@ -130,21 +130,42 @@ export default {
     },
     // 用户点击浏览器刷新按钮时，重新请求用户信息，若token未过期，则将请求的数据放入vuex中
     getUserInfo () {
+      return new Promise((resolve, reject) => {
+        req({
+          method: 'get',
+          url: '/api/getUserInfo'
+        }).then(res => {
+          console.log(res)
+          // 将用户信息存进vuex
+          this.$store.dispatch('insertUserInfo', res.data.user.data)
+          resolve(res)
+        }).catch(err => {
+          console.log(err)
+        })
+      })
+    },
+    // 获取用户收藏的房源信息 ->放vuex里面，若不发生增加或删除收藏房源时，用户都用该数据查看收藏房源
+    getCollection () {
+      let { id, role } = this.$store.state.userInfo
+      let data = { user_id: id, role: role }
       req({
-        method: 'get',
-        url: '/api/getUserInfo'
+        method: 'post',
+        url: '/api/collection/getCollectionByUserId',
+        data: data
       }).then(res => {
-        console.log(res)
-        // 将用户信息存进vuex
-        this.$store.dispatch('insertUserInfo', res.data.user.data)
+        console.log("该用户全部的收藏房源信息：", res.data.data)
+        this.$store.dispatch('insertHouseCollection', res.data.data)
+        console.log(this.$store.state.userRentalHouseCollection)
       }).catch(err => {
         console.log(err)
       })
     }
   },
-  created () {
+  async created () {
     // 获取用户信息
-    this.getUserInfo()
+    await this.getUserInfo()
+    // 获取该用户的全部收藏房源
+    this.getCollection()
   },
 }
 </script>

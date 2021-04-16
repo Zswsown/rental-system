@@ -7,5 +7,20 @@ class CollectionService extends Service {
     const ndata = await collection.insertCollection(data)
     return ndata
   }
+  // 取消收藏房源
+  async deleteCollection (data) {
+    const ndata = await collection.deleteCollection(data)
+    return ndata
+  }
+  // 根据用户id和房屋id 获取收藏房源
+  async getCollectionById (data) {
+    const ndata = await collection.getCollectionById(data);
+    return ndata;
+  }
+  // 根据用户id 获取收藏房源
+  async getCollectionByUserId (data) {
+    const ndata = await collection.getCollectionByUserId(data);
+    return ndata
+  }
 }
 module.exports = CollectionService

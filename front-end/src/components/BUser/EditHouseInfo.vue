@@ -5,6 +5,7 @@
         <h2 style="font-weight: 700">更新房源</h2>
       </a-col>
       <a-col>
+        <!-- 筛选数据源 ->根据出租方式获取数据源 -->
         <span>出租方式：</span>
         <a-select
           v-model="type"
@@ -298,16 +299,10 @@ export default {
   methods: {
     // 更新出租房屋状态信息
     updateRentalHouseById (record) {
-      console.log(record)
+      console.log(record, this.directList.filter(direct => record.directEdit === direct.label))
       let url = record.type === 'entire' ? '/api/house/updateEntireHouseById' : '/api/house/updateShareHouseById'
-      let data = {
-        id: record.id,
-        area: record.areaEdit,
-        price: record.priceEdit,
-        direct: this.directList.filter(direct => record.directEdit === direct.label)[0].value,
-        tag: record.tagEdit,
-        desc: record.descEdit
-      }
+      let { id, areaEdit, priceEdit, directEdit, tagEdit, descEdit } = record
+      let data = { id, area: areaEdit, price: priceEdit, direct: directEdit, tag: tagEdit, desc: descEdit }
       req({
         method: 'post',
         url: url,
@@ -343,7 +338,7 @@ export default {
           item.areaEdit = item.area
           item.priceEdit = item.price
           item.directName = self.directList.filter(direct => item.direct === direct.value)[0].label
-          item.directEdit = item.directName
+          item.directEdit = item.direct
           item.tagEdit = item.tag.split(',')
           item.descEdit = item.desc
           return item

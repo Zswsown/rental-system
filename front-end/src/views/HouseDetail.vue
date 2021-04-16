@@ -95,13 +95,26 @@
           </a-col>
           <a-col>
             <a-button
+              v-if="!this.isCollect"
               icon="heart"
               size="large"
               type="primary"
               ghost
-              @click="orderSeeRentalHouse"
+              @click="collectRentalHouse"
+              :loading="collectLoading"
               >点击收藏</a-button
             >
+            <a-button
+              v-else
+              size="large"
+              type="primary"
+              ghost
+              @click="collectRentalHouse"
+              :loading="collectLoading"
+            >
+              <a-icon type="heart" theme="filled"></a-icon>
+              取消收藏
+            </a-button>
           </a-col>
         </a-row>
       </a-row>
@@ -119,7 +132,13 @@ export default {
   data () {
     return {
       // 房屋详细信息
-      houseDetail: {}
+      houseDetail: {},
+      // 该房源收藏状态
+      isCollect: false,
+      // 点击收藏按钮后的加载状态
+      collectLoading: false,
+      // 获取到的收藏房源的信息
+      collectHouse: {}
     }
   },
   computed: {
@@ -134,6 +153,10 @@ export default {
     // 用户信息
     userInfo () {
       return this.$store.state.userInfo
+    },
+    // 用户收藏房源信息
+    userRentalHouseCollection () {
+      return this.$store.state.userRentalHouseCollection
     }
   },
   methods: {
@@ -142,7 +165,7 @@ export default {
       let self = this
       let { id, type } = self.$route.params
       let data = { id, type }
-      console.log("房源详情路由参数", data)
+      // console.log("房源详情路由参数", data)
       req({
         method: "POST",
         url: "/api/house/getRentalHouse",
@@ -181,34 +204,98 @@ export default {
       message.success('复制成功')
       copyInput.remove() //移除
     },
-    // 预约看房
-    orderSeeRentalHouse () {
-      let { id: house_id, type } = this.$route.params
-      let { role, id: user_id } = this.userInfo
-      let data = {
-        house_id,
-        type,
-        role,
-        user_id
-      }
+    // 获取用户收藏的房源信息 ->放vuex里面，若不发生增加或删除收藏房源时，用户都用该数据查看收藏房源
+    getCollection () {
+      let { id, role } = this.userInfo
+      let data = { user_id: id, role: role }
       req({
-        method: "post",
-        url: "/api/collection/insertCollection",
+        method: 'post',
+        url: '/api/collection/getCollectionByUserId',
         data: data
       }).then(res => {
-        if (res.data.code === 200) {
-          message.success(res.data.msg)
-        }
-        else {
-          message.error(res.data.msg)
-        }
+        console.log("该用户全部的收藏房源信息：", res.data.data)
+        this.$store.dispatch('insertHouseCollection', res.data.data)
+        console.log(this.$store.state.userRentalHouseCollection)
       }).catch(err => {
-        message.error(err)
+        console.log(err)
       })
+    },
+    // 判断用户是否收藏了该房源
+    isCollectRentalHouse () {
+      let userRentalHouseCollection = this.$store.state.userRentalHouseCollection
+      let { id: rental_house_id, type } = this.$route.params
+      let { id: user_id, role } = this.userInfo
+      if (userRentalHouseCollection.length != 0) {
+        let filterData = userRentalHouseCollection.filter((item) => {
+          return item.user_id == user_id && item.role === role && item.rental_house_id == rental_house_id && item.type === type
+        })
+        this.isCollect = filterData.length != 0
+        this.collectHouse = filterData[0]
+        console.log("该房源收藏状态：", this.isCollect, filterData, userRentalHouseCollection)
+      }
+    },
+    // 点击收藏
+    collectRentalHouse () {
+      if (this.isCollect) {
+        this.isCollectRentalHouse()
+        let data = {
+          id: this.collectHouse.id
+        }
+        this.collectLoading = true
+        req({
+          method: "post",
+          url: "/api/collection/deleteCollection",
+          data: data
+        }).then(res => {
+          if (res.data.code === 200) {
+            this.isCollect = !this.isCollect
+            message.success(res.data.msg)
+            this.getCollection()
+          }
+          else {
+            message.error(res.data.msg)
+          }
+          this.collectLoading = false
+        }).catch(err => {
+          message.error(err)
+          this.collectLoading = false
+        })
+      }
+      else {
+        console.log(this.$route.params, this.userInfo)
+        let { id: rental_house_id, type } = this.$route.params
+        let { role, id: user_id } = this.userInfo
+        let data = {
+          rental_house_id,
+          type,
+          role,
+          user_id
+        }
+        this.collectLoading = true
+        req({
+          method: "post",
+          url: "/api/collection/insertCollection",
+          data: data
+        }).then(res => {
+          if (res.data.code === 200) {
+            this.isCollect = !this.isCollect
+            message.success(res.data.msg)
+            this.getCollection()
+          }
+          else {
+            message.error(res.data.msg)
+          }
+          this.collectLoading = false
+        }).catch(err => {
+          message.error(err)
+          this.collectLoading = false
+        })
+      }
     }
   },
   created () {
     this.getHouseDetail()
+    this.isCollectRentalHouse()
   }
 }
 </script>
