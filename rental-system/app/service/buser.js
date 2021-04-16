@@ -25,11 +25,11 @@ class BUserService extends Service {
         user: user
       }
     }
-    return { user }
+    return user
   }
   async getBuserInfo (id) {
     const user = await buser.selectBUserById(id)
-    return { user }
+    return user
   }
   async updateBUser ({ id, nickname, tel, email, sex }) {
     const user = await buser.updateBUser({ id, nickname, tel, email, sex })

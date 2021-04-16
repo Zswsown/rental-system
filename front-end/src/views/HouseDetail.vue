@@ -154,6 +154,14 @@ export default {
     userInfo () {
       return this.$store.state.userInfo
     },
+    // 用户角色
+    userRole () {
+      return this.$store.getters.userRole
+    },
+    // 用户登录状态
+    isLogin () {
+      return this.$store.getters.isLogin
+    },
     // 用户收藏房源信息
     userRentalHouseCollection () {
       return this.$store.state.userRentalHouseCollection
@@ -206,7 +214,7 @@ export default {
     },
     // 获取用户收藏的房源信息 ->放vuex里面，若不发生增加或删除收藏房源时，用户都用该数据查看收藏房源
     getCollection () {
-      let { id, role } = this.userInfo
+      let { id, role } = this.$store.state.userInfo
       let data = { user_id: id, role: role }
       req({
         method: 'post',
@@ -214,8 +222,13 @@ export default {
         data: data
       }).then(res => {
         console.log("该用户全部的收藏房源信息：", res.data.data)
-        this.$store.dispatch('insertHouseCollection', res.data.data)
-        console.log(this.$store.state.userRentalHouseCollection)
+        let data = res.data.data
+        if (data != null) {
+          // 将用户收藏房源存进vuex
+          this.$store.dispatch('insertHouseCollection', res.data.data)
+          console.log(this.$store.state.userRentalHouseCollection)
+          resolve(res)
+        }
       }).catch(err => {
         console.log(err)
       })
@@ -236,6 +249,14 @@ export default {
     },
     // 点击收藏
     collectRentalHouse () {
+      if (!this.isLogin) {
+        message.error('请先登录系统，再收藏房源哦！')
+        return;
+      }
+      if (this.userRole === 'buser') {
+        message.error('你不是租户，麻烦先注册，再登录系统')
+        return;
+      }
       if (this.isCollect) {
         this.isCollectRentalHouse()
         let data = {
@@ -265,11 +286,13 @@ export default {
         console.log(this.$route.params, this.userInfo)
         let { id: rental_house_id, type } = this.$route.params
         let { role, id: user_id } = this.userInfo
+        let { house_id } = this.houseDetail
         let data = {
           rental_house_id,
           type,
           role,
-          user_id
+          user_id,
+          house_id
         }
         this.collectLoading = true
         req({

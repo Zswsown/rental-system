@@ -67,7 +67,7 @@ export default {
   },
   // 出租方式 选项列表
   typeList: [
-    // { label: '不限', value: 'all' },
+    { label: '不限', value: 'null' },
     { label: '整租', value: 'entire' },
     { label: '分租', value: 'share' }
   ],

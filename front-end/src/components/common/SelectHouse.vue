@@ -12,7 +12,7 @@
         <a-col :span="1"><span style="font-weight: 700">方式</span></a-col>
         <a-col :span="23">
           <span>
-            <a-radio-group v-model="types">
+            <a-radio-group v-model="filterOptions.types">
               <a-radio
                 v-for="item in typeList"
                 :value="item.value"
@@ -29,7 +29,7 @@
         <a-col :span="23">
           <span>
             <a-checkbox-group
-              v-model="prices"
+              v-model="filterOptions.prices"
               name="priceList"
               :options="priceList"
             />
@@ -42,7 +42,7 @@
         <a-col :span="23">
           <span>
             <a-checkbox-group
-              v-model="nums"
+              v-model="filterOptions.nums"
               name="numList"
               :options="numList"
             />
@@ -55,7 +55,7 @@
         <a-col :span="23">
           <span>
             <a-checkbox-group
-              v-model="directions"
+              v-model="filterOptions.directions"
               name="directList"
               :options="directList"
             />
@@ -105,14 +105,17 @@ export default {
   data () {
     return {
       filterSum: 22,
-      // 选择的 出租方式
-      types: this.type,
-      // 选择的 出租价格
-      prices: [],
-      // 选择的 房间朝向
-      directions: [],
-      // 选择的 房间数量
-      nums: [],
+      // 筛选的条件
+      filterOptions: {
+        // 选择的 出租方式
+        types: this.type,
+        // 选择的 出租价格
+        prices: [],
+        // 选择的 房间朝向
+        directions: [],
+        // 选择的 房间数量
+        nums: []
+      },
       // 出租房屋 数据源
       rentalHouseList: [],
     }
@@ -121,7 +124,6 @@ export default {
     changeTab (v) {
 
     },
-
   },
   computed: {
     // 获取出租方式 选项列表
@@ -141,6 +143,14 @@ export default {
       return root.numList
     }
   },
+  watch: {
+    filterOptions: {
+      handler (newValue) {
+        console.log(newValue)
+      },
+      deep: true
+    }
+  }
 }
 </script>
 

@@ -26,11 +26,11 @@ class GUserService extends Service {
         user: user
       }
     }
-    return { user }
+    return user
   }
   async getGuserInfo (id) {
     const user = await guser.selectGUserById(id)
-    return { user }
+    return user
   }
   async updateGUser ({ id, nickname, tel, email, sex }) {
     const user = await guser.updateGUser({ id, nickname, tel, email, sex })

@@ -18,6 +18,7 @@
 
 <script>
 import storage from "@/config/storage"
+import cookie from "@/config/cookie"
 import message from "ant-design-vue/lib/message"
 export default {
   name: "BUserPersonalCenter",
@@ -48,6 +49,9 @@ export default {
     exit () {
       // 清除localstorage中的token
       storage.localStorage.removeItem('rental_system_token')
+      // 清除浏览器中的cookie
+      cookie.removeCookie('rental_system_token')
+      cookie.removeCookie('rental_system_token.sig')
       // 清除vuex中的用户信息
       this.$store.dispatch('cleanUserInfo')
       message.success("账号退出成功!")

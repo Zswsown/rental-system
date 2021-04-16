@@ -136,9 +136,12 @@ export default {
           url: '/api/getUserInfo'
         }).then(res => {
           console.log(res)
-          // 将用户信息存进vuex
-          this.$store.dispatch('insertUserInfo', res.data.user.data)
-          resolve(res)
+          let data = res.data.data
+          if (data != null) {
+            // 将用户信息存进vuex
+            this.$store.dispatch('insertUserInfo', res.data.data)
+            resolve(res)
+          }
         }).catch(err => {
           console.log(err)
         })
@@ -154,8 +157,14 @@ export default {
         data: data
       }).then(res => {
         console.log("该用户全部的收藏房源信息：", res.data.data)
-        this.$store.dispatch('insertHouseCollection', res.data.data)
-        console.log(this.$store.state.userRentalHouseCollection)
+        let data = res.data.data
+        if (data != null) {
+          // 将用户收藏房源存进vuex
+          this.$store.dispatch('insertHouseCollection', res.data.data)
+          console.log(this.$store.state.userRentalHouseCollection)
+          resolve(res)
+        }
+
       }).catch(err => {
         console.log(err)
       })

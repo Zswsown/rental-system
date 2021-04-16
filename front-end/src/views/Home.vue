@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <select-house :sum="rentalHouseList.length"></select-house>
+    <select-house :type="`null`" :sum="rentalHouseList.length"></select-house>
     <house-info :rental-house-list="rentalHouseList"></house-info>
   </div>
 </template>

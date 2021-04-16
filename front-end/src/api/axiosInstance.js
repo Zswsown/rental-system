@@ -14,7 +14,7 @@ const axiosInstance = ({ baseURL, headers }) => {
     if (storage.localStorage.getItem("rental_system_token")) {
       config.headers.common['Authorization'] = 'Bearer ' + storage.localStorage.getItem("rental_system_token")
     }
-    // console.log(config)
+    console.log(config)
     return config
   }, function (error) {
     // 对请求错误做些什么
