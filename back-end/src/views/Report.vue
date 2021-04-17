@@ -233,7 +233,7 @@ export default {
       })
     }
   },
-  mounted () {
+  created () {
     this.getAllReportFakeHouse()
   }
 }

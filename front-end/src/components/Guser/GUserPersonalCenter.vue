@@ -4,7 +4,7 @@
       <template slot="content">
         <a-menu>
           <a-menu-item @click="editPersonalInfo">修改个人信息</a-menu-item>
-          <a-menu-item>查看浏览记录</a-menu-item>
+          <!-- <a-menu-item>查看浏览记录</a-menu-item> -->
         </a-menu>
       </template>
       <span>

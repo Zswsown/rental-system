@@ -197,12 +197,12 @@ export default {
         },
         {
           "title": "出租方式",
-          "dataIndex": "type",
-          "key": "type",
+          "dataIndex": "typeName",
+          "key": "typeName",
           // "width": 80,
           "align": "center",
           "scopedSlots": {
-            "customRender": "type"
+            "customRender": "typeName"
           }
         },
         {
@@ -344,7 +344,7 @@ export default {
       }).then(res => {
         // console.log("获取到的出租房屋：", res)
         self.rentalHouseList = res.data.data.map(item => {
-          item.type = this.typeList.filter(type => item.type === type.value)[0].label
+          item.typeName = this.typeList.filter(type => item.type === type.value)[0].label
           item.editable = false
           item.areaEdit = item.area
           item.priceEdit = item.price

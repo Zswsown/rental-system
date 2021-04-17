@@ -3,44 +3,12 @@
     <a-layout class="app-layout">
       <a-layout-header class="app-header">
         <a-row type="flex" align="middle">
-          <a-col class="app-icon" :offset="1">
+          <a-col class="app-icon">
             <a-icon
               type="home"
               :style="{ color: '#1890ff', marginRight: '8px' }"
             />
             <span>毕业生租房后台管理系统</span>
-          </a-col>
-          <!-- 导航栏 -->
-          <a-col :offset="5"> </a-col>
-          <!-- 登录注册及徽标显示栏 -->
-          <a-col :offset="8">
-            <div class="app-login">
-              <span style="margin-right: 6px"
-                ><a-icon type="aliwangwang" theme="filled"
-              /></span>
-
-              <!-- 用户登陆成功 -->
-              <a-popover>
-                <template slot="content">
-                  <a-menu>
-                    <a-menu-item @click="$router.push('/editPersonalInfo')"
-                      >修改个人信息</a-menu-item
-                    >
-                    <a-menu-item>查看浏览记录</a-menu-item>
-                  </a-menu>
-                </template>
-                <span
-                  ><a style="color: #fff" @click="loginModalVisible = true"
-                    >Zswsown</a
-                  ></span
-                >
-              </a-popover>
-              <span
-                ><a style="color: #fff" @click="registerModalVisible = true">
-                  退出
-                </a></span
-              >
-            </div>
           </a-col>
         </a-row>
       </a-layout-header>
@@ -49,7 +17,7 @@
         <a-layout-sider theme="light" class="app-sider">
           <a-row>
             <a-col>
-              <a-menu class="app-sider-menu">
+              <a-menu class="app-sider-menu" :selected-keys="activeKey">
                 <a-menu-item
                   v-for="item in siderMenuData"
                   :key="item.path"
@@ -81,9 +49,14 @@ import root from "@/config/root.js"
 export default {
   name: "App",
   computed: {
+    // 系统侧边栏
     siderMenuData () {
       return root.siderMenu
     },
+    // 获取激活的菜单项 -->根据路由判断
+    activeKey () {
+      return [this.$route.path]
+    }
   },
   methods: {
     // 路由跳转
@@ -107,6 +80,9 @@ export default {
     width: 1366px;
     height: 635px;
   }
+}
+.app-header {
+  padding: 0 16px;
 }
 .app-layout {
   width: 100%;

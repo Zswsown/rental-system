@@ -72,13 +72,13 @@
       </p>
     </a-row>
     <!-- 按什么规则排序 -->
-    <a-row>
+    <!-- <a-row>
       <a-tabs default-active-key="new" @change="changeTab">
         <a-tab-pane key="new" tab="最新上架"></a-tab-pane>
         <a-tab-pane key="price" tab="价格"></a-tab-pane>
         <a-tab-pane key="area" tab="面积"></a-tab-pane>
       </a-tabs>
-    </a-row>
+    </a-row> -->
   </div>
 </template>
 
