@@ -134,9 +134,67 @@ async function updateBUser ({ id, nickname, tel, email, sex }) {
   }
 }
 
+// 获取全部房源管家信息
+async function selectAllBUser () {
+  try {
+    const sql = 'SELECT * FROM buser'
+    const [rows, fields] = await pool.query(sql)
+    if (rows.length > 0) {
+      return {
+        msg: '获取全部的房源管家账号成功',
+        code: 500,
+        data: rows
+      }
+    } else {
+      return {
+        msg: '服务器繁忙',
+        data: rows,
+        code: 5005
+      }
+    }
+  }
+  catch (err) {
+    return {
+      msg: '服务器报错了',
+      data: err,
+      code: 5004
+    }
+  }
+}
+
+async function updateBUserById (data) {
+  try {
+    const { status, id } = data
+    const sql = "UPDATE buser SET `status` = ? WHERE id = ?"
+    const [rows, fields] = await pool.query(sql, [status, id])
+    if (rows.affectedRows > 0) {
+      return {
+        msg: '更新用户信息成功',
+        data: rows,
+        code: 200
+      }
+    } else {
+      return {
+        msg: '更新用户信息失败',
+        data: null,
+        code: 5003
+      }
+    }
+  }
+  catch (err) {
+    return {
+      msg: '服务器报错了',
+      data: err,
+      code: 5004
+    }
+  }
+}
+
 module.exports = {
   selectBUser,
   insertBUser,
   updateBUser,
-  selectBUserById
+  selectBUserById,
+  selectAllBUser,
+  updateBUserById
 }

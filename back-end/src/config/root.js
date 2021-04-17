@@ -38,7 +38,22 @@ export default {
     { label: '整租', value: 'entire' },
     { label: '分租', value: 'share' }
   ],
-  statusList: {
+  buserCodeStatusList: {
+    reviewing: {
+      color: '#1890ff',
+      label: '审核中',
+    },
+    success: {
+      color: '#0F62FE',
+      label: '已通过',
+    },
+    refused: {
+      color: '#52C41A',
+      label: '已拒绝',
+    },
+  },
+  // 房屋状态
+  houseStatusList: {
     disRented: {
       color: '#1890ff',
       label: '未出租',

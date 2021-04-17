@@ -50,7 +50,7 @@
         <span slot="created_time" slot-scope="text">{{
           moment(text).format("YYYY/MM/DD HH:mm:ss")
         }}</span>
-        <!-- 故障状态 -->
+        <!-- 房屋状态 -->
         <a-popover
           trigger="click"
           :visible="$item.statusEditVisible"
@@ -284,7 +284,7 @@ export default {
         url: url,
         data: { id }
       }).then(res => {
-        console.log("获取到的出租房屋：", res)
+        // console.log("获取到的出租房屋：", res)
         self.rentalHouseList = res.data.data.map(item => {
           item.statusEditVisible = false
           return item

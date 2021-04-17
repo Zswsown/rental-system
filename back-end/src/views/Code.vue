@@ -4,30 +4,114 @@
       <h2 style="font-weight: 700">审核房源管家账号</h2>
     </a-row>
     <!-- 分割线 -->
-    <a-divider></a-divider>
+    <a-divider style="margin-top: 0"></a-divider>
     <a-row>
       <a-table
-        class="houseCollectionTable"
+        class="illegalTable"
         :bordered="true"
         :pagination="false"
         row-key="id"
-        :data-source="houseCollectionList"
+        :data-source="buserCodeList"
         style="width: 100%"
-        :columns="houseCollectionTableColumn"
+        :columns="buserCodeTableColumn"
       >
-        <!-- id -->
-        <span slot="id" slot-scope="text">
-          <a style="vertical-align: middle; margin-left: 4px">{{ text }}</a>
-        </span>
-        <!-- 创建时间 -->
-        <span slot="created_time" slot-scope="text">{{
+        <!-- 提交时间 -->
+        <span slot="create_time" slot-scope="text">{{
           moment(text).format("YYYY/MM/DD HH:mm:ss")
         }}</span>
-        <!-- 故障状态 -->
-        <a-row slot="status" slot-scope="text, $item">
-          <a-button type="primary">通过</a-button>
-          <a-button style="margin-left: 20px">拒绝</a-button>
-        </a-row>
+        <!-- 回复时间 -->
+        <span slot="update_time" slot-scope="text">{{
+          moment(text).format("YYYY/MM/DD HH:mm:ss")
+        }}</span>
+        <!-- 审核状态 -->
+        <a-popover
+          trigger="click"
+          :visible="record.statusEditVisible"
+          slot="status"
+          slot-scope="text, record"
+        >
+          <template v-slot:content>
+            <div
+              style="
+                width: 240px;
+                height: 32px;
+                line-height: 31px;
+                border-bottom: 1px solid #e8e8e8;
+                margin-top: -10px;
+              "
+            >
+              <span style="font-weight: bolder">修改审核状态</span>
+              <a-icon
+                type="close"
+                style="
+                  float: right;
+                  transform: translateY(9px);
+                  color: red;
+                  cursor: pointer;
+                "
+                @click="record.statusEditVisible = false"
+              ></a-icon>
+            </div>
+            <div style="width: 240px; margin-top: 10px">
+              <div
+                :style="{
+                  marginLeft: index ? '10px' : '0',
+                  cursor: 'pointer',
+                  color: item.color,
+                  borderColor: item.color,
+                  display: 'inline-block',
+                  height: '25px',
+                  lineHeight: '23px',
+                  padding: '0 10px',
+                  border: `1px solid ${item.color}`,
+                  borderRadius: '25px',
+                }"
+                v-for="(item, index) of buserCodeStatusList"
+                :key="'buserCodeStatusList-' + index"
+                @click="
+                  () => {
+                    record.statusEditVisible = false;
+                    changeBuserCodeStatus(record, index);
+                  }
+                "
+              >
+                {{ item.label }}
+              </div>
+            </div>
+          </template>
+          <div
+            :style="{
+              cursor: 'pointer',
+              color: buserCodeStatusList[text]
+                ? buserCodeStatusList[text].color
+                : '#1890ff',
+              borderColor: buserCodeStatusList[text]
+                ? buserCodeStatusList[text].color
+                : '#1890ff',
+              display: 'inline-block',
+              height: '25px',
+              lineHeight: '23px',
+              padding: '0 10px',
+              border: `1px solid ${
+                buserCodeStatusList[text]
+                  ? buserCodeStatusList[text].color
+                  : '#1890ff'
+              }`,
+              borderRadius: '25px',
+            }"
+            @click="
+              () => {
+                record.statusEditVisible = !record.statusEditVisible;
+              }
+            "
+          >
+            {{
+              buserCodeStatusList[text]
+                ? buserCodeStatusList[text].label
+                : "未知"
+            }}
+          </div>
+        </a-popover>
       </a-table>
     </a-row>
     <a-row style="margin-top: 20px">
@@ -54,121 +138,169 @@
           }
         "
       ></a-pagination> -->
-      <a-pagination :total="20"> </a-pagination>
+      <!-- <a-pagination :total="20"> </a-pagination> -->
     </a-row>
   </div>
 </template>
 
 <script>
+import req from "@/api/req.js"
+import message from "ant-design-vue/lib/message"
 import moment from "moment"
 import root from "@/config/root.js"
 export default {
   name: "Code",
   data () {
     return {
-      houseCollectionTableColumn: [{
-        "title": "姓名",
-        "dataIndex": "id",
-        "key": "id",
-        "width": 80,
-        "align": "center",
-        "scopedSlots": {
-          "customRender": "id"
-        }
-      }, {
-        "title": "备注信息",
-        "dataIndex": "area",
-        "key": "area",
-        "width": 150,
-        "align": "center",
-        "scopedSlots": {
-          "customRender": "area"
-        }
-      }, {
-        "title": "提交时间",
-        "dataIndex": "created_time",
-        "key": "created_time",
-        "width": 150,
-        "align": "center",
-        "scopedSlots": {
-          "customRender": "created_time"
-        }
-      }, {
-        "title": "操作",
-        "dataIndex": "status",
-        "key": "status",
-        "width": 180,
-        "align": "center",
-        "scopedSlots": {
-          "customRender": "status"
-        }
-      }],
-      houseCollectionList: [
+      // 房源管家账号列表
+      buserCodeList: [],
+      // 房源管家账号表格列
+      buserCodeTableColumn: [
         {
-          id: "张三",
-          area: "家中闲置房屋出租",
-          created_time: 1617156519366,
-          status: 'offline',
-          statusEditVisible: null
+          "title": "序号",
+          "dataIndex": "id",
+          "key": "id",
+          "align": "center",
+          "width": "60px",
+          "scopedSlots": {
+            "customRender": "id"
+          }
         },
         {
-          id: "李四",
-          area: "二手房东",
-          created_time: 1617159519366,
-          status: 'rented',
-          statusEditVisible: null
+          "title": "账号",
+          "dataIndex": "code",
+          "key": "code",
+          "align": "center",
+          "width": "100px",
+          "scopedSlots": {
+            "customRender": "code"
+          }
         },
         {
-          id: "王五",
-          area: "家里闲置一栋楼",
-          created_time: 1617157518377,
-          status: 'rented',
-          statusEditVisible: null
+          "title": "昵称",
+          "dataIndex": "nickname",
+          "key": "nickname",
+          "align": "center",
+          "width": "100px",
+          "scopedSlots": {
+            "customRender": "nickname"
+          }
         },
         {
-          id: "郑六",
-          area: "家里闲置两栋楼",
-          created_time: 1617157516388,
-          status: 'disRented',
-          statusEditVisible: null
+          "title": "联系方式",
+          "dataIndex": "tel",
+          "key": "tel",
+          "align": "center",
+          "width": "100px",
+          "scopedSlots": {
+            "customRender": "tel"
+          }
         },
         {
-          id: "王三",
-          area: "家里闲置一栋楼",
-          created_time: 1617157549399,
-          status: 'disRented',
-          statusEditVisible: null
+          "title": "邮箱地址",
+          "dataIndex": "email",
+          "key": "email",
+          "align": "center",
+          "width": "160px",
+          "scopedSlots": {
+            "customRender": "email"
+          }
         },
         {
-          id: "王八",
-          area: "二手房东有房源",
-          created_time: 1617156519300,
-          status: 'disRented',
-          statusEditVisible: null
+          "title": "申请理由",
+          "dataIndex": "reason",
+          "key": "reason",
+          "align": "center",
+          "width": "160px",
+          "scopedSlots": {
+            "customRender": "reason"
+          }
         },
         {
-          id: "王九",
-          area: "家中闲置房屋出租",
-          created_time: 1617157519311,
-          status: 'offline',
-          statusEditVisible: null
-        }
-      ]
+          "title": "审核状态",
+          "dataIndex": "status",
+          "key": "status",
+          "align": "center",
+          "scopedSlots": {
+            "customRender": "status"
+          }
+        },
+        {
+          "title": "提交时间",
+          "dataIndex": "create_time",
+          "key": "create_time",
+          "align": "center",
+          "width": "160px",
+          "scopedSlots": {
+            "customRender": "create_time"
+          }
+        },
+        {
+          "title": "审核时间",
+          "dataIndex": "update_time",
+          "key": "update_time",
+          "align": "center",
+          "width": "160px",
+          "scopedSlots": {
+            "customRender": "update_time"
+          }
+        },
+
+      ],
     }
   },
   computed: {
-    statusList () {
-      return root.statusList
-    },
     // moment
     moment () {
       return moment
     },
+    // 房源管家账号 审核状态列表
+    buserCodeStatusList () {
+      return root.buserCodeStatusList
+    }
   },
   methods: {
-    changeStatus (text, item) {
-
+    // 获取全部举报虚假房源信息
+    getAllBUser () {
+      req({
+        method: 'get',
+        url: '/api/buser/selectAllBUser'
+      }).then(res => {
+        console.log(res)
+        this.buserCodeList = res.data.data.map(item => {
+          item.statusEditVisible = false
+          return item
+        })
+      }).catch(err => {
+        console.log(err)
+        message.error(err)
+      })
     },
+    // 修改房源管家审核状态
+    changeBuserCodeStatus (record, index) {
+      console.log(record, index)
+      let { id } = record
+      let data = { id, status: index }
+      req({
+        method: 'post',
+        url: '/api/buser/updateBUserById',
+        data: data
+      }).then(res => {
+        if (res.data.code === 200) {
+          this.getAllBUser()
+          message.success(res.data.msg)
+        }
+        else {
+          message.error(res.data.msg)
+        }
+      }).catch(err => {
+        console.log(err)
+        message.error(err)
+      })
+    },
+  },
+  mounted () {
+    this.getAllBUser()
   }
 }
 </script>
@@ -180,12 +312,12 @@ export default {
   width: 100%;
   height: 100%;
 }
-.housecollectionTable ::v-deep .ant-table-tbody > tr > td {
-  padding: 6px 16px;
+.illegalTable ::v-deep .ant-table-tbody > tr > td {
+  padding: 6px;
   overflow-wrap: break-word;
 }
-.housecollectionTable ::v-deep .ant-table-thead > tr > th {
-  padding: 6px 16px;
+.illegalTable ::v-deep .ant-table-thead > tr > th {
+  padding: 6px;
   overflow-wrap: break-word;
 }
 </style>

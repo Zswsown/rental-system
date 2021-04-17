@@ -58,8 +58,6 @@ class UserController extends Controller {
       ctx.body = { msg: '用户未登录', code: 50011, data: null }
     }
   }
-
-
 }
 module.exports = UserController
 

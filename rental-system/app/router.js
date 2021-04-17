@@ -11,6 +11,10 @@ module.exports = app => {
   router.post('/api/guser/updateGUser', controller.guser.updateGUser)
   router.post('/api/buser/updateBUser', controller.buser.updateBUser)
 
+  // 房源管家相关
+  router.get('/api/buser/selectAllBUser', controller.buser.selectAllBUser)
+  router.post('/api/buser/updateBUserById', controller.buser.updateBUserById)
+
   router.get('/api/house/getAllRentalHouse', controller.house.selectAllRentalHouse)
   router.post('/api/house/selectRentalHouseByFilterOptions', controller.house.selectRentalHouseByFilterOptions)
   router.post('/api/house/getRentalHouse', controller.house.selectRentalHouse)

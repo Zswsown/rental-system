@@ -35,6 +35,14 @@ class BUserService extends Service {
     const user = await buser.updateBUser({ id, nickname, tel, email, sex })
     return user
   }
+  async selectAllBUser () {
+    const data = await buser.selectAllBUser()
+    return data
+  }
+  async updateBUserById (data) {
+    const user = await buser.updateBUserById(data)
+    return user
+  }
 }
 
 module.exports = BUserService

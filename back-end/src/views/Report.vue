@@ -135,16 +135,6 @@ export default {
           }
         },
         {
-          "title": "回复时间",
-          "dataIndex": "update_time",
-          "key": "update_time",
-          "align": "center",
-          "width": "160px",
-          "scopedSlots": {
-            "customRender": "update_time"
-          }
-        },
-        {
           "title": "回复状态",
           "dataIndex": "replyReportStatus",
           "key": "replyReportStatus",
@@ -161,6 +151,16 @@ export default {
           "width": "160px",
           "scopedSlots": {
             "customRender": "reply_report"
+          }
+        },
+        {
+          "title": "回复时间",
+          "dataIndex": "update_time",
+          "key": "update_time",
+          "align": "center",
+          "width": "160px",
+          "scopedSlots": {
+            "customRender": "update_time"
           }
         },
         {
@@ -211,8 +211,8 @@ export default {
     },
     // 回复举报虚假房源消息
     replyReport (record) {
-      let { id, reply_report } = record
-      let data = { id, reply_report }
+      let { id, replyReportEdit } = record
+      let data = { id, reply_report: replyReportEdit }
       req({
         method: 'post',
         url: '/api/illegal/updateReportFakeHouse',

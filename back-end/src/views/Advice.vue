@@ -1,7 +1,7 @@
 <template>
   <div class="advice">
     <a-row>
-      <h2 style="font-weight: 700">虚假房源举报信息</h2>
+      <h2 style="font-weight: 700">反馈意见信息</h2>
     </a-row>
     <!-- 分割线 -->
     <a-divider style="margin-top: 0"></a-divider>
@@ -212,8 +212,8 @@ export default {
     },
     // 回复举报虚假房源消息
     replyAdvice (record) {
-      let { id, reply_advice } = record
-      let data = { id, reply_advice }
+      let { id, replyEdit } = record
+      let data = { id, reply_advice: replyEdit }
       req({
         method: 'post',
         url: '/api/advice/updateAdvice',
