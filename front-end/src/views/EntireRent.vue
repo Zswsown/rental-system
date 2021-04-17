@@ -1,6 +1,10 @@
 <template>
   <div class="entire-rent">
-    <select-house :type="`entire`" :sum="entireHouseList.length"></select-house>
+    <select-house
+      :type="`entire`"
+      :sum="entireHouseList.length"
+      @filterRentalHouse="filterRentalHouse"
+    ></select-house>
     <house-info :rental-house-list="entireHouseList"></house-info>
   </div>
 </template>
@@ -41,7 +45,7 @@ export default {
         method: 'get',
         url: '/api/house/getAllEntireHouse'
       }).then(res => {
-        console.log("获取到的出租房屋：", res)
+        // console.log("获取到的出租房屋：", res)
         let list = res.data.data.map(house => {
           house.directName = self.directList.filter(direct => house.direct === direct.value)[0].label
           house.typeName = self.typeList.filter(type => house.type === type.value)[0].label
@@ -49,9 +53,36 @@ export default {
           return house
         })
         self.entireHouseList = list
-        console.log("获取到的出租房屋：", self.entireHouseList)
+        // console.log("获取到的出租房屋：", self.entireHouseList)
       }).catch(err => {
         console.log(err)
+        message.error(err)
+      })
+    },
+    // 筛选房源
+    filterRentalHouse (filterOptions) {
+      console.log(filterOptions)
+      req({
+        method: "post",
+        url: "/api/house/selectRentalHouseByFilterOptions",
+        data: filterOptions
+      }).then(res => {
+        console.log(res)
+        if (res.data.code === 500) {
+          let list = res.data.data.map(house => {
+            house.directName = this.directList.filter(direct => house.direct === direct.value)[0].label
+            house.typeName = this.typeList.filter(type => house.type === type.value)[0].label
+            house.tag = house.tag.split(',')
+            return house
+          })
+          this.entireHouseList = list
+          message.success(res.data.msg)
+        }
+        else {
+          this.shareHouseList = []
+          message.error(res.data.msg)
+        }
+      }).catch(err => {
         message.error(err)
       })
     }

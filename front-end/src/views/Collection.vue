@@ -21,6 +21,12 @@
         style="width: 100%"
         :columns="collectRentalHouseTableColumn"
       >
+        <!-- 出租方式 -->
+        <span slot="type" slot-scope="text">
+          <span style="vertical-align: middle; margin-left: 4px">{{
+            text
+          }}</span>
+        </span>
         <!-- 房间编号 -->
         <span slot="id" slot-scope="text">
           <span style="vertical-align: middle; margin-left: 4px">{{
@@ -124,12 +130,22 @@ export default {
       collectRentalHouseTableColumn: [
         {
           "title": "编号",
-          "dataIndex": "id",
-          "key": "id",
+          "dataIndex": "c_id",
+          "key": "c_id",
           // "width": 80,
           "align": "center",
           "scopedSlots": {
-            "customRender": "id"
+            "customRender": "c_id"
+          }
+        },
+        {
+          "title": "出租方式",
+          "dataIndex": "type",
+          "key": "type",
+          // "width": 80,
+          "align": "center",
+          "scopedSlots": {
+            "customRender": "type"
           }
         },
         {
@@ -224,6 +240,10 @@ export default {
     userInfo () {
       return this.$store.state.userInfo
     },
+    // 获取出租方式 选项列表
+    typeList () {
+      return root.typeList
+    },
     // 获取房间朝向 选项列表
     directList () {
       return root.directList
@@ -243,6 +263,7 @@ export default {
         let data = res.data.data
         if (data != null) {
           this.collectRentalHouseList = res.data.data.map(item => {
+            item.type = this.typeList.filter(type => item.type === type.value)[0].label
             item.direct = this.directList.filter(direct => item.direct === direct.value)[0].label
             return item
           })

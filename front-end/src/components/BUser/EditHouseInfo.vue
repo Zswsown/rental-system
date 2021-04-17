@@ -196,6 +196,16 @@ export default {
           }
         },
         {
+          "title": "出租方式",
+          "dataIndex": "type",
+          "key": "type",
+          // "width": 80,
+          "align": "center",
+          "scopedSlots": {
+            "customRender": "type"
+          }
+        },
+        {
           "title": "所处区域",
           "dataIndex": "province_name",
           "key": "province_name",
@@ -332,8 +342,9 @@ export default {
         url: url,
         data: { id }
       }).then(res => {
-        console.log("获取到的出租房屋：", res)
+        // console.log("获取到的出租房屋：", res)
         self.rentalHouseList = res.data.data.map(item => {
+          item.type = this.typeList.filter(type => item.type === type.value)[0].label
           item.editable = false
           item.areaEdit = item.area
           item.priceEdit = item.price
@@ -343,7 +354,7 @@ export default {
           item.descEdit = item.desc
           return item
         })
-        console.log("获取到的出租房屋：", self.rentalHouseList)
+        // console.log("获取到的出租房屋：", self.rentalHouseList)
       }).catch(err => {
         console.log(err)
         message.error(err)

@@ -68,12 +68,20 @@ export default {
         data: filterOptions
       }).then(res => {
         console.log(res)
-        // if (res.data.code === 200) {
-        //   message.success(res.data.msg)
-        // }
-        // else {
-        //   message.error(res.data.msg)
-        // }
+        if (res.data.code === 500) {
+          let list = res.data.data.map(house => {
+            house.directName = this.directList.filter(direct => house.direct === direct.value)[0].label
+            house.typeName = this.typeList.filter(type => house.type === type.value)[0].label
+            house.tag = house.tag.split(',')
+            return house
+          })
+          this.rentalHouseList = list
+          message.success(res.data.msg)
+        }
+        else {
+          this.shareHouseList = []
+          message.error(res.data.msg)
+        }
       }).catch(err => {
         message.error(err)
       })

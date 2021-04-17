@@ -92,7 +92,7 @@ async function insertShareHouse ({ house_id, rentalHouse, userInfo }) {
 //获取全部出租房源信息
 async function selectAllRentalHouse () {
   try {
-    let sql = 'SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address,area, price, direct, tag, `desc`,e.id,e.buser_id,house_id FROM rent_house as r RIGHT JOIN rent_entire_house as e ON r.id = e.house_id UNION SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address, area, price, direct, tag, `desc`, s.id, s.buser_id, house_id FROM rent_house as r RIGHT JOIN rent_share_house as s ON r.id = s.house_id'
+    let sql = 'SELECT * FROM (SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address,area, price, direct, tag, `desc`, `status`,e.id,e.buser_id,house_id FROM rent_house as r RIGHT JOIN rent_entire_house as e ON r.id = e.house_id) AS new1 WHERE `status` = "disRented" UNION SELECT * FROM (SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address, area, price, direct, tag, `desc`, `status`, s.id, s.buser_id, house_id FROM rent_house as r RIGHT JOIN rent_share_house as s ON r.id = s.house_id) AS new2 WHERE `status` = "disRented"'
     const [rows, fields] = await pool.query(sql)
     if (rows.length > 0) {
       return {
@@ -119,7 +119,7 @@ async function selectAllRentalHouse () {
 // 获取全部整租出租房源
 async function selectAllEntireHouse () {
   try {
-    let sql = 'SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address,area, price, direct, tag, `desc`,e.id,e.buser_id,house_id FROM rent_house as r RIGHT JOIN rent_entire_house as e ON r.id = e.house_id'
+    let sql = 'SELECT * FROM (SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address,area, price, direct, tag, `desc`,`status`,e.id,e.buser_id,house_id FROM rent_house as r RIGHT JOIN rent_entire_house as e ON r.id = e.house_id ) AS new1 WHERE `status` = "disRented"'
     const [rows, fields] = await pool.query(sql)
     if (rows.length > 0) {
       return {
@@ -146,7 +146,7 @@ async function selectAllEntireHouse () {
 // 获取全部分租出租房源
 async function selectAllShareHouse () {
   try {
-    let sql = 'SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address,area, price, direct, tag, `desc`,s.id,s.buser_id,house_id FROM rent_house as r RIGHT JOIN rent_share_house as s ON r.id = s.house_id'
+    let sql = 'SELECT * FROM ( SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address,area, price, direct, tag, `desc`,`status`,s.id,s.buser_id,house_id FROM rent_house as r RIGHT JOIN rent_share_house as s ON r.id = s.house_id ) AS new1 WHERE `status` = "disRented"'
     const [rows, fields] = await pool.query(sql)
     if (rows.length > 0) {
       return {
@@ -244,16 +244,18 @@ async function selectRentalHouseByFilterOptions (data) {
     }
     params = params.slice(0, -4)
     if (types == "null") {
-      sql = 'SELECT * FROM ( SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address,area, price, direct, tag, `desc`,e.id,e.buser_id,house_id FROM rent_house as r RIGHT JOIN rent_entire_house as e ON r.id = e.house_id UNION SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address, area, price, direct, tag, `desc`, s.id, s.buser_id, house_id FROM rent_house as r RIGHT JOIN rent_share_house as s ON r.id = s.house_id ) AS new ' + params
+      sql = 'SELECT * FROM (SELECT * FROM (SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address,area, price, direct, tag, `desc`, `status`,e.id,e.buser_id,house_id FROM rent_house as r RIGHT JOIN rent_entire_house as e ON r.id = e.house_id) AS new1 WHERE `status` = "disRented" UNION SELECT * FROM (SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address, area, price, direct, tag, `desc`, `status`, s.id, s.buser_id, house_id FROM rent_house as r RIGHT JOIN rent_share_house as s ON r.id = s.house_id) AS new2 WHERE `status` = "disRented" ) AS new ' + params
     }
     else {
       if (types == "entire") {
-        sql = 'SELECT * FROM ( SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address,area, price, direct, tag, `desc`,e.id,e.buser_id,house_id FROM rent_house as r RIGHT JOIN rent_entire_house as e ON r.id = e.house_id ) AS new ' + params
+        sql = 'SELECT * FROM (SELECT * FROM (SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address,area, price, direct, tag, `desc`,`status`,e.id,e.buser_id,house_id FROM rent_house as r RIGHT JOIN rent_entire_house as e ON r.id = e.house_id ) AS new1 WHERE `status` = "disRented") AS new ' + params
       }
       else {
-        sql = 'SELECT * FROM ( SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address,area, price, direct, tag, `desc`,e.id,e.buser_id,house_id FROM rent_house as r RIGHT JOIN rent_share_house as e ON r.id = e.house_id ) AS new ' + params
+        sql = 'SELECT * FROM ( SELECT * FROM ( SELECT type, num, province_id, city_id, country_id, area_id, province_name, city_name, country_name, area_name, address,area, price, direct, tag, `desc`,`status`,s.id,s.buser_id,house_id FROM rent_house as r RIGHT JOIN rent_share_house as s ON r.id = s.house_id ) AS new1 WHERE `status` = "disRented") AS new ' + params
       }
     }
+    // let length = sql.length
+    // return { sql, length }
     const [rows, fields] = await pool.query(sql)
     if (rows.length > 0) {
       return {

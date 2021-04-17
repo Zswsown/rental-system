@@ -1,6 +1,10 @@
 <template>
   <div class="share-rent">
-    <select-house :type="`share`" :sum="shareHouseList.length"></select-house>
+    <select-house
+      :type="`share`"
+      :sum="shareHouseList.length"
+      @filterRentalHouse="filterRentalHouse"
+    ></select-house>
     <house-info :rental-house-list="shareHouseList"></house-info>
   </div>
 </template>
@@ -52,6 +56,33 @@ export default {
         // console.log("获取到的出租房屋：", self.shareHouseList)
       }).catch(err => {
         console.log(err)
+        message.error(err)
+      })
+    },
+    // 筛选房源
+    filterRentalHouse (filterOptions) {
+      console.log(filterOptions)
+      req({
+        method: "post",
+        url: "/api/house/selectRentalHouseByFilterOptions",
+        data: filterOptions
+      }).then(res => {
+        console.log(res)
+        if (res.data.code === 500) {
+          let list = res.data.data.map(house => {
+            house.directName = this.directList.filter(direct => house.direct === direct.value)[0].label
+            house.typeName = this.typeList.filter(type => house.type === type.value)[0].label
+            house.tag = house.tag.split(',')
+            return house
+          })
+          this.shareHouseList = list
+          message.success(res.data.msg)
+        }
+        else {
+          this.shareHouseList = []
+          message.error(res.data.msg)
+        }
+      }).catch(err => {
         message.error(err)
       })
     }
