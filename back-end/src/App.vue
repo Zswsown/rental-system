@@ -95,54 +95,54 @@ export default {
 }
 </script>
 
-<style lang="scss">
-#app {
-  width: 1920px;
-  height: 1080px;
+<style scoped>
+@media screen and (min-width: 1367px) {
+  #app {
+    width: 1920px;
+    height: 1080px;
+  }
+}
+@media screen and (max-width: 1366px) {
+  #app {
+    width: 1366px;
+    height: 635px;
+  }
 }
 .app-layout {
   width: 100%;
   height: 100%;
 }
-// .app-header{
-//   height:36px !important
-// }
 .app-icon {
   font-size: 22px;
   font-weight: 700;
-  // line-height:36px !important;
   color: #fff;
 }
 .app-nav {
-  // line-height:36px !important;
   border: 0 !important;
   background: #001529;
   color: #fff !important;
 }
 .app-login {
-  // line-height:36px !important;
   color: #fff;
 }
 .app-sider {
-  // flex: 0 0 40px;
-  // max-width: 40px !important;
-  // min-width: 40px !important;
-  // width: 40px !important;
   padding-top: 10px;
 }
-// .app-sider-menu{
-//   border: 0;
-// }
-// .app-sider-menu ::v-deep .ant-menu-item{
-//   padding:6px;
-// }
-// .app-sider-menu ::v-deep .ant-menu-item .anticon{
-//   margin-right:0;
-// }
 .app-content {
-  width: calc(100% - 200px);
   height: calc(100% - 64px);
-  padding: 20px 200px;
+  padding: 20px 20px;
+}
+/* 设置滚动条的样式 */
+/* 局部不显示滚动条 */
+::-webkit-scrollbar {
+  display: none;
 }
 </style>
+<style>
+/* 全局不显示滚动条 */
+html {
+  overflow: hidden;
+}
+</style>
+
 

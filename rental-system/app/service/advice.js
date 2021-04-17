@@ -7,5 +7,15 @@ class AdviceService extends Service {
     const ndata = await advice.insertAdvice(data)
     return ndata
   }
+  // 回复反馈意见
+  async updateAdvice (data) {
+    const ndata = await advice.updateAdvice(data)
+    return ndata
+  }
+  // 获取全部反馈意见消息
+  async selectAllAdvice (data) {
+    const ndata = await advice.selectAllAdvice(data)
+    return ndata
+  }
 }
 module.exports = AdviceService

@@ -1,31 +1,48 @@
 <template>
-  <div class="code">
+  <div class="advice">
     <a-row>
-      <h2 style="font-weight: 700">反馈意见</h2>
+      <h2 style="font-weight: 700">虚假房源举报信息</h2>
     </a-row>
     <!-- 分割线 -->
-    <a-divider></a-divider>
+    <a-divider style="margin-top: 0"></a-divider>
     <a-row>
       <a-table
-        class="houseCollectionTable"
+        class="illegalTable"
         :bordered="true"
         :pagination="false"
         row-key="id"
-        :data-source="houseCollectionList"
+        :data-source="illegalList"
         style="width: 100%"
-        :columns="houseCollectionTableColumn"
+        :columns="illegalTableColumn"
       >
-        <!-- id -->
-        <span slot="id" slot-scope="text">
-          <a style="vertical-align: middle; margin-left: 4px">{{ text }}</a>
+        <!-- 角色 -->
+        <span slot="role" slot-scope="text">
+          {{ text == "guser" ? "租户" : "房源管家" }}
         </span>
-        <!-- 创建时间 -->
-        <span slot="created_time" slot-scope="text">{{
-          moment(text).format("YYYY/MM/DD HH:mm:ss")
-        }}</span>
+        <!-- 提交时间 -->
+        <span slot="create_time" slot-scope="text">
+          {{ moment(text).format("YYYY/MM/DD HH:mm:ss") }}
+        </span>
+        <!-- 回复时间 -->
+        <span slot="update_time" slot-scope="text">
+          {{ text != null ? moment(text).format("YYYY/MM/DD HH:mm:ss") : text }}
+        </span>
         <!-- 故障状态 -->
-        <a-row slot="status" slot-scope="text, $item">
-          <a-button type="primary">回复</a-button>
+        <a-row slot="operation" slot-scope="text, record">
+          <a-button type="primary" @click="record.replyModalVisible = true">
+            回复
+          </a-button>
+          <a-modal
+            title="回复反馈意见"
+            :visible="record.replyModalVisible"
+            :confirm-loading="record.replyModalConfirmLoading"
+            ok-text="回复"
+            cancel-text="取消"
+            @ok="replyAdvice(record)"
+            @cancel="record.replyModalVisible = false"
+          >
+            <a-textarea :rows="4" v-model="record.replyEdit"></a-textarea>
+          </a-modal>
         </a-row>
       </a-table>
     </a-row>
@@ -53,138 +70,189 @@
           }
         "
       ></a-pagination> -->
-      <a-pagination :total="20"> </a-pagination>
+      <!-- <a-pagination :total="20"> </a-pagination> -->
     </a-row>
   </div>
 </template>
 
 <script>
+import req from "@/api/req.js"
+import message from "ant-design-vue/lib/message"
 import moment from "moment"
 import root from "@/config/root.js"
 export default {
-  name: "Code",
+  name: "Advice",
   data () {
     return {
-      houseCollectionTableColumn: [{
-        "title": "账号",
-        "dataIndex": "id",
-        "key": "id",
-        "width": 80,
-        "align": "center",
-        "scopedSlots": {
-          "customRender": "id"
+      // 举报虚假房源列表
+      illegalList: [],
+      // 举报虚假房源表格列
+      illegalTableColumn: [
+        {
+          "title": "序号",
+          "dataIndex": "id",
+          "key": "id",
+          "align": "center",
+          "width": "100px",
+          "scopedSlots": {
+            "customRender": "id"
+          }
+        },
+        {
+          "title": "角色",
+          "dataIndex": "role",
+          "key": "role",
+          "align": "center",
+          "scopedSlots": {
+            "customRender": "role"
+          }
+        },
+        {
+          "title": "角色id",
+          "dataIndex": "user_id",
+          "key": "user_id",
+          "align": "center",
+          "scopedSlots": {
+            "customRender": "user_id"
+          }
+        },
+        {
+          "title": "反馈意见",
+          "dataIndex": "advice",
+          "key": "advice",
+          "width": 160,
+          "align": "center",
+          "scopedSlots": {
+            "customRender": "advice"
+          }
+        },
+        {
+          "title": "提交时间",
+          "dataIndex": "create_time",
+          "key": "create_time",
+          "align": "center",
+          "width": "160px",
+          "scopedSlots": {
+            "customRender": "create_time"
+          }
+        },
+        {
+          "title": "回复状态",
+          "dataIndex": "replyStatus",
+          "key": "replyStatus",
+          "align": "center",
+          "scopedSlots": {
+            "customRender": "replyStatus"
+          }
+        },
+        {
+          "title": "回复内容",
+          "dataIndex": "reply_advice",
+          "key": "reply_advice",
+          "align": "center",
+          "width": "160px",
+          "scopedSlots": {
+            "customRender": "reply_advice"
+          }
+        },
+        {
+          "title": "回复时间",
+          "dataIndex": "update_time",
+          "key": "update_time",
+          "align": "center",
+          "width": "160px",
+          "scopedSlots": {
+            "customRender": "update_time"
+          }
+        },
+        {
+          "title": "操作",
+          "key": "operation",
+          "align": "center",
+          "scopedSlots": {
+            "customRender": "operation"
+          }
         }
-      }, {
-        "title": "反馈意见",
-        "dataIndex": "area",
-        "key": "area",
-        "width": 150,
-        "align": "center",
-        "scopedSlots": {
-          "customRender": "area"
-        }
-      }, {
-        "title": "提交时间",
-        "dataIndex": "created_time",
-        "key": "created_time",
-        "width": 150,
-        "align": "center",
-        "scopedSlots": {
-          "customRender": "created_time"
-        }
-      }, {
-        "title": "操作",
-        "dataIndex": "status",
-        "key": "status",
-        "width": 180,
-        "align": "center",
-        "scopedSlots": {
-          "customRender": "status"
-        }
-      }],
-      houseCollectionList: [
-        {
-          id: "张三",
-          area: "界面尽量美观些",
-          created_time: 1617156519366,
-          status: 'offline',
-          statusEditVisible: null
-        },
-        {
-          id: "李四",
-          area: "界面尽量美观些",
-          created_time: 1617159519366,
-          status: 'rented',
-          statusEditVisible: null
-        },
-        {
-          id: "王五",
-          area: "界面尽量美观些",
-          created_time: 1617157518377,
-          status: 'rented',
-          statusEditVisible: null
-        },
-        {
-          id: "郑六",
-          area: "界面尽量美观些",
-          created_time: 1617157516388,
-          status: 'disRented',
-          statusEditVisible: null
-        },
-        {
-          id: "王三",
-          area: "界面尽量美观些",
-          created_time: 1617157549399,
-          status: 'disRented',
-          statusEditVisible: null
-        },
-        {
-          id: "王八",
-          area: "界面尽量美观些",
-          created_time: 1617156519300,
-          status: 'disRented',
-          statusEditVisible: null
-        },
-        {
-          id: "王九",
-          area: "界面尽量美观些",
-          created_time: 1617157519311,
-          status: 'offline',
-          statusEditVisible: null
-        }
-      ]
+      ],
     }
   },
   computed: {
-    statusList () {
-      return root.statusList
-    },
     // moment
     moment () {
       return moment
     },
+    // 获取出租方式 选项列表
+    typeList () {
+      return root.typeList
+    },
+    // 回复举报虚假房源信息 状态列表
+    replyStatusList () {
+      return root.replyStatusList
+    }
   },
   methods: {
-    changeStatus (text, item) {
-
+    // 获取全部举报虚假房源信息
+    getAllAdvice () {
+      req({
+        method: 'get',
+        url: '/api/advice/selectAllAdvice'
+      }).then(res => {
+        console.log(res)
+        this.illegalList = res.data.data.map(item => {
+          item.replyModalVisible = false
+          item.replyModalConfirmLoading = false
+          item.replyStatus = this.replyStatusList[item.status].label
+          item.replyEdit = ""
+          return item
+        })
+      }).catch(err => {
+        console.log(err)
+        message.error(err)
+      })
     },
+    // 回复举报虚假房源消息
+    replyAdvice (record) {
+      let { id, reply_advice } = record
+      let data = { id, reply_advice }
+      req({
+        method: 'post',
+        url: '/api/advice/updateAdvice',
+        data: data
+      }).then(res => {
+        console.log(res)
+        if (res.data.code === 500) {
+          message.success(res.data.msg)
+          record.replyModalVisible = false
+          this.getAllAdvice()
+        }
+        else {
+          message.error(res.data.msg)
+        }
+      }).catch(err => {
+        console.log(err)
+        message.error(err)
+      })
+    }
+  },
+  mounted () {
+    this.getAllAdvice()
   }
 }
 </script>
 
 <style scoped>
-.code {
+.advice {
   background: #fff;
   padding: 8px;
   width: 100%;
   height: 100%;
 }
-.housecollectionTable ::v-deep .ant-table-tbody > tr > td {
-  padding: 6px 16px;
+.illegalTable ::v-deep .ant-table-tbody > tr > td {
+  padding: 6px;
   overflow-wrap: break-word;
 }
-.housecollectionTable ::v-deep .ant-table-thead > tr > th {
-  padding: 6px 16px;
+.illegalTable ::v-deep .ant-table-thead > tr > th {
+  padding: 6px;
   overflow-wrap: break-word;
 }
 </style>

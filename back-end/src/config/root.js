@@ -21,6 +21,23 @@ export default {
     icon: 'notification'
   },
   ],
+  // 回复 举报虚假房源状态列表
+  replyStatusList: {
+    replied: {
+      color: '#1890ff',
+      label: '已回复'
+    },
+    unreplied: {
+      color: '#0F62FE',
+      label: '未回复',
+    }
+  },
+  // 出租方式 选项列表
+  typeList: [
+    { label: '不限', value: 'null' },
+    { label: '整租', value: 'entire' },
+    { label: '分租', value: 'share' }
+  ],
   statusList: {
     disRented: {
       color: '#1890ff',

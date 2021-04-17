@@ -31,12 +31,12 @@ module.exports = function (appInfo) {
       enable: false,
       ignoreJSON: true,
     },
-    domainWhiteList: ['http://localhost:8080'],//允许访问接口的白名单
+    domainWhiteList: ['http://localhost:8080', 'http://localhost:8081'],//允许访问接口的白名单
   }
   // 跨域详细配置
   config.cors = {
     credentials: true,// 允许携带认证，携带cookie时的跨域一定要开启
-    origin: 'http://localhost:8080', // 允许访问的origin，认证时不能为 '*'
+    // origin: 'http://localhost:8080', // 允许访问的origin，认证时不能为 '*',多个origin时删除origin字段即可
     allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS',//允许的请求方法
   }
 
