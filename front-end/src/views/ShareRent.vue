@@ -41,7 +41,7 @@ export default {
         method: 'get',
         url: '/api/house/getAllShareHouse'
       }).then(res => {
-        console.log("获取到的出租房屋：", res)
+        // console.log("获取到的出租房屋：", res)
         let list = res.data.data.map(house => {
           house.directName = self.directList.filter(direct => house.direct === direct.value)[0].label
           house.typeName = self.typeList.filter(type => house.type === type.value)[0].label
@@ -49,7 +49,7 @@ export default {
           return house
         })
         self.shareHouseList = list
-        console.log("获取到的出租房屋：", self.shareHouseList)
+        // console.log("获取到的出租房屋：", self.shareHouseList)
       }).catch(err => {
         console.log(err)
         message.error(err)

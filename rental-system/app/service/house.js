@@ -31,6 +31,11 @@ class HouseService extends Service {
     const data = await house.selectAllRentalHouse()
     return data
   }
+  // 根据筛选条件获取全部出租房源
+  async selectRentalHouseByFilterOptions (data) {
+    const ndata = await house.selectRentalHouseByFilterOptions(data)
+    return ndata
+  }
   // 获取出租房源 信息
   async selectRentalHouse ({ id, type }) {
     const shouse = await house.selectRentalHouse({ id, type })

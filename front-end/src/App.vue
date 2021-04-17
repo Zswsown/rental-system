@@ -156,15 +156,13 @@ export default {
         url: '/api/collection/getCollectionByUserId',
         data: data
       }).then(res => {
-        console.log("该用户全部的收藏房源信息：", res.data.data)
+        // console.log("该用户全部的收藏房源信息：", res.data.data)
         let data = res.data.data
         if (data != null) {
           // 将用户收藏房源存进vuex
           this.$store.dispatch('insertHouseCollection', res.data.data)
           console.log(this.$store.state.userRentalHouseCollection)
-          resolve(res)
         }
-
       }).catch(err => {
         console.log(err)
       })

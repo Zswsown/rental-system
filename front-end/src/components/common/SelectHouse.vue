@@ -147,6 +147,7 @@ export default {
     filterOptions: {
       handler (newValue) {
         console.log(newValue)
+        this.$emit('filterRentalHouse', newValue)
       },
       deep: true
     }

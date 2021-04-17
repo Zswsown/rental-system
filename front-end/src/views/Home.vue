@@ -1,6 +1,10 @@
 <template>
   <div class="home">
-    <select-house :type="`null`" :sum="rentalHouseList.length"></select-house>
+    <select-house
+      :type="`null`"
+      :sum="rentalHouseList.length"
+      @filterRentalHouse="filterRentalHouse"
+    ></select-house>
     <house-info :rental-house-list="rentalHouseList"></house-info>
   </div>
 </template>
@@ -41,7 +45,7 @@ export default {
         method: 'get',
         url: '/api/house/getAllRentalHouse'
       }).then(res => {
-        console.log("获取到的出租房屋：", res)
+        // console.log("获取到的出租房屋：", res)
         let list = res.data.data.map(house => {
           house.directName = self.directList.filter(direct => house.direct === direct.value)[0].label
           house.typeName = self.typeList.filter(type => house.type === type.value)[0].label
@@ -49,9 +53,28 @@ export default {
           return house
         })
         self.rentalHouseList = list
-        console.log("获取到的出租房屋：", self.rentalHouseList)
+        // console.log("获取到的出租房屋：", self.rentalHouseList)
       }).catch(err => {
         console.log(err)
+        message.error(err)
+      })
+    },
+    // 筛选房源
+    filterRentalHouse (filterOptions) {
+      console.log(filterOptions)
+      req({
+        method: "post",
+        url: "/api/house/selectRentalHouseByFilterOptions",
+        data: filterOptions
+      }).then(res => {
+        console.log(res)
+        // if (res.data.code === 200) {
+        //   message.success(res.data.msg)
+        // }
+        // else {
+        //   message.error(res.data.msg)
+        // }
+      }).catch(err => {
         message.error(err)
       })
     }

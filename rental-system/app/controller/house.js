@@ -23,6 +23,11 @@ class HouseController extends Controller {
     const data = await ctx.service.house.selectAllRentalHouse()
     ctx.body = data
   }
+  async selectRentalHouseByFilterOptions () {
+    const { ctx } = this
+    const data = await ctx.service.house.selectRentalHouseByFilterOptions(ctx.request.body)
+    ctx.body = data
+  }
   async selectRentalHouse () {
     const { ctx } = this
     const { id, type } = ctx.request.body

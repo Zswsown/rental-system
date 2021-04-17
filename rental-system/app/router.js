@@ -12,6 +12,7 @@ module.exports = app => {
   router.post('/api/buser/updateBUser', controller.buser.updateBUser)
 
   router.get('/api/house/getAllRentalHouse', controller.house.selectAllRentalHouse)
+  router.post('/api/house/selectRentalHouseByFilterOptions', controller.house.selectRentalHouseByFilterOptions)
   router.post('/api/house/getRentalHouse', controller.house.selectRentalHouse)
   router.get('/api/house/getAllEntireHouse', controller.house.selectAllEntireHouse)
   router.get('/api/house/getAllShareHouse', controller.house.selectAllShareHouse)

@@ -78,44 +78,6 @@ async function insertBUser ({ code, password, role, tel }) {
   }
 }
 
-// // 系统管理员审核房源管家账号，更新房源管家信息
-// async function updateBuser ({ code, password, role, tel, status }) {
-//   try {
-//     const isExist = selectBUser({ code, password, role }).error
-//     if (isExist) {
-//       const sql = 'INSERT INTO buser (code,password,role,tel,status) values(?,?,?,?,?)'
-//       const [rows, fields] = await pool.query(sql, [code, password, role, tel, status])
-//       if (rows.affectedRows > 0) {
-//         return {
-//           msg: '更新成功',
-//           code: 500,
-//           data: rows
-//         }
-//       } else {
-//         return {
-//           msg: '服务器繁忙',
-//           data: null,
-//           code: 5005
-//         }
-//       }
-//     }
-//     else {
-//       return {
-//         msg: '更新失败',
-//         code: 5009,
-//         data: null
-//       }
-//     }
-//   }
-//   catch (err) {
-//     return {
-//       msg: '服务器报错了',
-//       data: null,
-//       code: 5004
-//     }
-//   }
-// }
-
 // 根据用户id查询用户信息
 async function selectBUserById (id) {
   try {
